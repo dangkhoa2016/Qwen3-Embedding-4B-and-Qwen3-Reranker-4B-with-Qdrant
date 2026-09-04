@@ -29,7 +29,7 @@ export EMBEDDING_MICROBATCH_SIZE RERANKER_MICROBATCH_SIZE ALLOW_REMOTE_MODEL_DOW
 export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
 
 # Do not increase workers: every worker could materialize another ~4B+4B model pair.
-exec python -m uvicorn qwen_dual_server.main:app \
+exec python -m uvicorn qwen3_qdrant.main:app \
   --app-dir "$ROOT/src" \
   --host "$SERVER_HOST" \
   --port "$SERVER_PORT" \

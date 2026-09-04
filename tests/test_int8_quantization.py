@@ -4,9 +4,9 @@ import pytest
 import torch
 from pydantic import ValidationError
 
-from qwen_dual_server.config import Settings
-from qwen_dual_server.embedding_engine import EmbeddingEngine
-from qwen_dual_server.reranker_engine import RerankerEngine
+from qwen3_qdrant.config import Settings
+from qwen3_qdrant.embedding_engine import EmbeddingEngine
+from qwen3_qdrant.reranker_engine import RerankerEngine
 
 
 class FakeQuantizedWeight:
@@ -130,7 +130,7 @@ def test_settings_reject_unknown_quantization_mode(monkeypatch):
 
 
 def test_torchao_factory_maps_a8w8_and_weight_only(monkeypatch):
-    from qwen_dual_server.quantization import build_torchao_quantization_config
+    from qwen3_qdrant.quantization import build_torchao_quantization_config
 
     calls = []
 
@@ -163,7 +163,7 @@ def test_embedding_int8_loader_uses_cpu_torchao_contract(monkeypatch, tmp_path):
     sentinel = object()
 
     monkeypatch.setattr(
-        "qwen_dual_server.embedding_engine.build_torchao_quantization_config",
+        "qwen3_qdrant.embedding_engine.build_torchao_quantization_config",
         lambda mode: sentinel,
     )
 
@@ -193,7 +193,7 @@ def test_reranker_int8_loader_preserves_yes_no_scoring(monkeypatch, tmp_path):
     sentinel = object()
 
     monkeypatch.setattr(
-        "qwen_dual_server.reranker_engine.build_torchao_quantization_config",
+        "qwen3_qdrant.reranker_engine.build_torchao_quantization_config",
         lambda mode: sentinel,
     )
 
@@ -216,7 +216,7 @@ def test_reranker_int8_loader_preserves_yes_no_scoring(monkeypatch, tmp_path):
 
 
 def test_quantized_validator_fails_closed_without_quantized_weight_evidence():
-    from qwen_dual_server.quantization import validate_quantized_cpu_model
+    from qwen3_qdrant.quantization import validate_quantized_cpu_model
 
     class PlainModel:
         def __init__(self):

@@ -4,9 +4,9 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from qwen_dual_server.config import Settings
-from qwen_dual_server.memory import bytes_to_gib, parse_memory_events
-from qwen_dual_server.process_lock import ProcessSingletonLock, ProcessSingletonLockError
+from qwen3_qdrant.config import Settings
+from qwen3_qdrant.memory import bytes_to_gib, parse_memory_events
+from qwen3_qdrant.process_lock import ProcessSingletonLock, ProcessSingletonLockError
 
 
 def test_settings_have_cpu_safe_defaults(monkeypatch):

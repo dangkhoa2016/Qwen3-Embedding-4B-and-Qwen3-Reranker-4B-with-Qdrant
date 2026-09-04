@@ -15,9 +15,9 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
-from qwen_dual_server.api import create_app
-from qwen_dual_server.config import Settings
-from qwen_dual_server.gguf_reranker_engine import GGUFRerankerEngine
+from qwen3_qdrant.api import create_app
+from qwen3_qdrant.config import Settings
+from qwen3_qdrant.gguf_reranker_engine import GGUFRerankerEngine
 
 
 # ---------------------------------------------------------------------------
@@ -76,7 +76,7 @@ def _make_gguf_engine(tmp_path: Path):
     )
     Path(cfg.reranker_gguf_path).write_bytes(b"gguf")
 
-    from qwen_dual_server.llama_server import LlamaServerProcess
+    from qwen3_qdrant.llama_server import LlamaServerProcess
 
     class FakeServer:
         started = False

@@ -6,7 +6,7 @@ import os
 import sys
 from pathlib import Path
 
-from qwen_dual_server.production_demo import DemoConfig, HybridHttpClient, ProductionDemoPipeline, QdrantHttpClient
+from qwen3_qdrant.production_demo import DemoConfig, HybridHttpClient, ProductionDemoPipeline, QdrantHttpClient
 
 ROOT = Path(__file__).resolve().parents[1]
 queries = json.loads((ROOT / "corpus/production-demo-queries.json").read_text())

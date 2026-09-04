@@ -3,15 +3,15 @@ from types import SimpleNamespace
 import pytest
 import torch
 
-from qwen_dual_server.config import Settings
-from qwen_dual_server.embedding_engine import EmbeddingEngine
-from qwen_dual_server.engine_common import (
+from qwen3_qdrant.config import Settings
+from qwen3_qdrant.embedding_engine import EmbeddingEngine
+from qwen3_qdrant.engine_common import (
     current_transformers_dtype_keyword,
     model_dtype_kwargs,
     select_dtype_keyword,
 )
-from qwen_dual_server.formatting import RERANK_PREFIX, RERANK_SUFFIX, format_reranker_pair
-from qwen_dual_server.reranker_engine import RerankerEngine
+from qwen3_qdrant.formatting import RERANK_PREFIX, RERANK_SUFFIX, format_reranker_pair
+from qwen3_qdrant.reranker_engine import RerankerEngine
 
 
 class Batch(dict):

@@ -1,7 +1,7 @@
 # OpenCode CLI Runbook — Qwen3-Embedding-4B + Qwen3-Reranker-4B CPU/RAM-only Shared REST Server
 
 **Date:** 2026-08-30  
-**Source release:** `qwen3-dual-4b-cpu-rest-server-v0.1.0-with-git.zip`  
+**Source release:** `qwen3-embedding-4b-reranker-4b-qdrant-v0.1.0-with-git.zip`  
 **Target:** fresh Kaggle Notebook, **CPU/RAM only**, approximately 30–32 GiB RAM  
 **Purpose:** prove that both Qwen 4B models can coexist in one CPU process, expose authenticated REST APIs, and optionally publish the service through a tunnel for other notebooks.
 
@@ -70,7 +70,7 @@ The historical CPU FP32 failure mode matters: final weight size can fit while st
 
 Create a **fresh CPU Kaggle Notebook**. Attach:
 
-1. `qwen3-dual-4b-cpu-rest-server-v0.1.0-with-git.zip`
+1. `qwen3-embedding-4b-reranker-4b-qdrant-v0.1.0-with-git.zip`
 2. its `.sha256` sidecar
 3. Kaggle Model `dangkhoa2016/qwen-qwen3-embedding-4b`, Transformers/default variation
 4. Kaggle Model `dangkhoa2016/qwen-qwen3-reranker-4b`, Transformers/default variation
@@ -167,9 +167,9 @@ Procedure:
 
 ```bash
 SOURCE_ZIP="$(find /kaggle/working /kaggle/input -type f \
-  -name 'qwen3-dual-4b-cpu-rest-server-v0.1.0-with-git.zip' -print 2>/dev/null | head -n1)"
+  -name 'qwen3-embedding-4b-reranker-4b-qdrant-v0.1.0-with-git.zip' -print 2>/dev/null | head -n1)"
 SOURCE_SHA="$(find /kaggle/working /kaggle/input -type f \
-  -name 'qwen3-dual-4b-cpu-rest-server-v0.1.0-with-git.zip.sha256' -print 2>/dev/null | head -n1)"
+  -name 'qwen3-embedding-4b-reranker-4b-qdrant-v0.1.0-with-git.zip.sha256' -print 2>/dev/null | head -n1)"
 FROZEN_V010_SHA='682b612b494d2f3682f7c56f1dd764cfb91117f56f3c9586f6ea1c35eff30a8e'
 
 test -n "$SOURCE_ZIP"

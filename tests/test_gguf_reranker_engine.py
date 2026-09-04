@@ -3,7 +3,7 @@ from types import SimpleNamespace
 import math
 import pytest
 
-from qwen_dual_server.gguf_reranker_engine import GGUFRerankerEngine, UnsupportedInstructionError
+from qwen3_qdrant.gguf_reranker_engine import GGUFRerankerEngine, UnsupportedInstructionError
 
 
 class FakeServer:

@@ -29,7 +29,7 @@ The final qualification accepted `K=5`, rejected the need for the K=2 fallback, 
 
 ## First public identity
 
-The approved first public package identity is `qwen3-dual-4b-cpu-rest-server==1.0.0`, authored by `Đăng Khoa <i.am@dangkhoa.dev>` under the MIT License.
+The approved first public package identity is `qwen3-embedding-4b-reranker-4b-qdrant==1.0.0`, authored by `Đăng Khoa <i.am@dangkhoa.dev>` under the MIT License. The internal import package remains `qwen3_qdrant`; historical internal service/lock identifiers are intentionally retained in protected qualified configuration.
 
 The temporary local packaging version `0.2.3rc1` was never published and is retained only as provenance.
 
@@ -38,9 +38,9 @@ The temporary local packaging version `0.2.3rc1` was never published and is reta
 Publication work must preserve byte identity for:
 
 ```text
-src/qwen_dual_server/config.py
-src/qwen_dual_server/gguf_reranker_engine.py
-src/qwen_dual_server/production_demo.py
+src/qwen3_qdrant/config.py
+src/qwen3_qdrant/gguf_reranker_engine.py
+src/qwen3_qdrant/production_demo.py
 tests/test_gguf_reranker_engine.py
 tests/test_production_demo.py
 ```

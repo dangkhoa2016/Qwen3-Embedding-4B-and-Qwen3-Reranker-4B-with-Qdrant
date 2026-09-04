@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from qwen_dual_server.model_locator import ModelResolutionError, resolve_model_path, validate_model_root
+from qwen3_qdrant.model_locator import ModelResolutionError, resolve_model_path, validate_model_root
 
 
 def make_model(root: Path, role: str) -> Path:

@@ -2,9 +2,9 @@ import hashlib
 
 from fastapi.testclient import TestClient
 
-from qwen_dual_server.api import create_app
-from qwen_dual_server.config import Settings
-from qwen_dual_server.production_demo import CANDIDATE_ANSWER_RERANK_INSTRUCTION
+from qwen3_qdrant.api import create_app
+from qwen3_qdrant.config import Settings
+from qwen3_qdrant.production_demo import CANDIDATE_ANSWER_RERANK_INSTRUCTION
 
 EXPECTED_H3 = """Judge YES only when the Candidate entity itself is the answer entity requested by the Query.
 Use the Candidate entity's identity and entity type to decide whether it satisfies what the Query asks for.

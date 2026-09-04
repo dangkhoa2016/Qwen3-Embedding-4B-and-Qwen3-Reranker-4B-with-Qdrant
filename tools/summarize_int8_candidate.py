@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-from qwen_dual_server.int8_benchmark import classify_candidate, compute_speedups
+from qwen3_qdrant.int8_benchmark import classify_candidate, compute_speedups
 
 root = Path(sys.argv[1])
 config = json.loads((root / "evidence" / "candidate-config.json").read_text())

@@ -18,9 +18,9 @@ Describe what this change does and why it is needed.
 Protected semantic files for publication-hygiene work:
 
 ```text
-src/qwen_dual_server/config.py
-src/qwen_dual_server/gguf_reranker_engine.py
-src/qwen_dual_server/production_demo.py
+src/qwen3_qdrant/config.py
+src/qwen3_qdrant/gguf_reranker_engine.py
+src/qwen3_qdrant/production_demo.py
 tests/test_gguf_reranker_engine.py
 tests/test_production_demo.py
 ```

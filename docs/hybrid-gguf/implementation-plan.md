@@ -29,7 +29,7 @@
 ## Task 1: Additive GGUF locator
 
 **Files:**
-- Create: `src/qwen_dual_server/gguf_locator.py`
+- Create: `src/qwen3_qdrant/gguf_locator.py`
 - Create: `tests/test_gguf_locator.py`
 
 **Produces:**
@@ -44,7 +44,7 @@
 ## Task 2: llama-server process wrapper
 
 **Files:**
-- Create: `src/qwen_dual_server/llama_server.py`
+- Create: `src/qwen3_qdrant/llama_server.py`
 - Create: `tests/test_llama_server.py`
 
 **Produces:**
@@ -64,7 +64,7 @@
 ## Task 3: GGUF reranker HTTP adapter
 
 **Files:**
-- Create: `src/qwen_dual_server/gguf_reranker_engine.py`
+- Create: `src/qwen3_qdrant/gguf_reranker_engine.py`
 - Create: `tests/test_gguf_reranker_engine.py`
 
 **Produces runtime-compatible methods:**
@@ -84,8 +84,8 @@
 ## Task 4: Patch Settings and runtime backend selection
 
 **Files modified in the existing experiment tree:**
-- `src/qwen_dual_server/config.py`
-- `src/qwen_dual_server/runtime.py`
+- `src/qwen3_qdrant/config.py`
+- `src/qwen3_qdrant/runtime.py`
 - `.env.example`
 
 **Patch artifact:**

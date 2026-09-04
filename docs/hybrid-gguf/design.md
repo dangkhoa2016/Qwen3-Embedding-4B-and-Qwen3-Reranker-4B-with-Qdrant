@@ -126,7 +126,7 @@ This preserves the frozen baseline unless the experimental backend is explicitly
 
 ## 5. Component changes
 
-### 5.1 `src/qwen_dual_server/config.py`
+### 5.1 `src/qwen3_qdrant/config.py`
 
 Add:
 
@@ -184,7 +184,7 @@ RERANKER_BACKEND=llama_cpp
 -> GPU offload is not enabled by this experiment
 ```
 
-### 5.2 New `src/qwen_dual_server/gguf_locator.py`
+### 5.2 New `src/qwen3_qdrant/gguf_locator.py`
 
 Responsibilities:
 
@@ -204,7 +204,7 @@ Do not auto-fallback to another quant.
 
 If Q4_K_M is missing, fail closed and show available matching `.gguf` files.
 
-### 5.3 New `src/qwen_dual_server/llama_server.py`
+### 5.3 New `src/qwen3_qdrant/llama_server.py`
 
 This unit owns the child process only.
 
@@ -240,7 +240,7 @@ No `-ngl` / GPU offload in this CPU experiment.
 
 The exact supported flags must be checked against the installed `llama-server --help` before real-model execution. If the installed version uses a compatible alias, adapt only the launcher, not the public service contract.
 
-### 5.4 New `src/qwen_dual_server/gguf_reranker_engine.py`
+### 5.4 New `src/qwen3_qdrant/gguf_reranker_engine.py`
 
 Public interface must mirror the current reranker engine closely enough for `DualModelRuntime`:
 
@@ -336,7 +336,7 @@ Do not silently concatenate an instruction into the query because that would cha
 
 This limitation is acceptable for the first GGUF feasibility run and must be recorded in `/v1/models`/documentation.
 
-### 5.6 `src/qwen_dual_server/runtime.py`
+### 5.6 `src/qwen3_qdrant/runtime.py`
 
 Factory behavior:
 
@@ -627,9 +627,9 @@ create a production release
 Create:
 
 ```text
-src/qwen_dual_server/gguf_locator.py
-src/qwen_dual_server/llama_server.py
-src/qwen_dual_server/gguf_reranker_engine.py
+src/qwen3_qdrant/gguf_locator.py
+src/qwen3_qdrant/llama_server.py
+src/qwen3_qdrant/gguf_reranker_engine.py
 
 tests/test_gguf_locator.py
 tests/test_llama_server.py
@@ -639,8 +639,8 @@ tests/test_gguf_reranker_engine.py
 Modify:
 
 ```text
-src/qwen_dual_server/config.py
-src/qwen_dual_server/runtime.py
+src/qwen3_qdrant/config.py
+src/qwen3_qdrant/runtime.py
 tests/test_config_memory.py
 tests/test_runtime.py
 tests/test_api.py

@@ -4,9 +4,9 @@ This overlay adds an opt-in `llama_cpp` reranker backend to the existing Qwen3 d
 
 ## What it adds
 
-- `src/qwen_dual_server/gguf_locator.py`
-- `src/qwen_dual_server/llama_server.py`
-- `src/qwen_dual_server/gguf_reranker_engine.py`
+- `src/qwen3_qdrant/gguf_locator.py`
+- `src/qwen3_qdrant/llama_server.py`
+- `src/qwen3_qdrant/gguf_reranker_engine.py`
 - unit tests for all three modules
 - `tools/apply_hybrid_gguf_patch.py` to patch a fresh disposable source extraction
 - `scripts/setup_llama_cpp_b10699.sh` for a pinned llama.cpp CPU binary

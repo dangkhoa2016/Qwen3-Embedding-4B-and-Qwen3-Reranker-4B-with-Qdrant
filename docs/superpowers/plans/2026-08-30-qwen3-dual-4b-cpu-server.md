@@ -34,9 +34,9 @@
 - Test: `tests/test_formatting.py`
 - Test: `tests/test_pooling.py`
 - Test: `tests/test_model_locator.py`
-- Create: `src/qwen_dual_server/formatting.py`
-- Create: `src/qwen_dual_server/tensor_ops.py`
-- Create: `src/qwen_dual_server/model_locator.py`
+- Create: `src/qwen3_qdrant/formatting.py`
+- Create: `src/qwen3_qdrant/tensor_ops.py`
+- Create: `src/qwen3_qdrant/model_locator.py`
 
 **Interfaces:**
 - Produces `format_embedding_text`, `format_reranker_pair`, `last_token_pool`, `normalize_embedding_fp32`, `resolve_model_path`.
@@ -50,9 +50,9 @@
 
 **Files:**
 - Test: `tests/test_config_memory.py`
-- Create: `src/qwen_dual_server/config.py`
-- Create: `src/qwen_dual_server/memory.py`
-- Create: `src/qwen_dual_server/process_lock.py`
+- Create: `src/qwen3_qdrant/config.py`
+- Create: `src/qwen3_qdrant/memory.py`
+- Create: `src/qwen3_qdrant/process_lock.py`
 
 **Interfaces:**
 - Produces `Settings`, `MemorySnapshot`, `capture_memory_snapshot`, `ProcessSingletonLock`.
@@ -65,8 +65,8 @@
 
 **Files:**
 - Test: `tests/test_engine_contracts.py`
-- Create: `src/qwen_dual_server/embedding_engine.py`
-- Create: `src/qwen_dual_server/reranker_engine.py`
+- Create: `src/qwen3_qdrant/embedding_engine.py`
+- Create: `src/qwen3_qdrant/reranker_engine.py`
 
 **Interfaces:**
 - Produces `EmbeddingEngine.load/embed/warmup/metadata` and `RerankerEngine.load/rerank/warmup/metadata`.
@@ -79,7 +79,7 @@
 
 **Files:**
 - Test: `tests/test_runtime.py`
-- Create: `src/qwen_dual_server/runtime.py`
+- Create: `src/qwen3_qdrant/runtime.py`
 
 **Interfaces:**
 - Produces `DualModelRuntime.load_all`, `.embed`, `.rerank`, `.status`, `.stats`.
@@ -92,10 +92,10 @@
 
 **Files:**
 - Test: `tests/test_api.py`
-- Create: `src/qwen_dual_server/gate.py`
-- Create: `src/qwen_dual_server/schemas.py`
-- Create: `src/qwen_dual_server/api.py`
-- Create: `src/qwen_dual_server/main.py`
+- Create: `src/qwen3_qdrant/gate.py`
+- Create: `src/qwen3_qdrant/schemas.py`
+- Create: `src/qwen3_qdrant/api.py`
+- Create: `src/qwen3_qdrant/main.py`
 
 **Interfaces:**
 - Produces `create_app(settings, runtime)` and ASGI object `app`.
