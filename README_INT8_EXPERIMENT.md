@@ -1,4 +1,5 @@
 # Qwen3 Dual-4B CPU — Transformers + TorchAO INT8 experiment
+> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](README_INT8_EXPERIMENT.vi.md)
 
 This is an **experimental copy** of frozen `qwen3-embedding-4b-reranker-4b-qdrant v0.1.1`.
 The canonical v0.1.1 release/history/tag are not modified.

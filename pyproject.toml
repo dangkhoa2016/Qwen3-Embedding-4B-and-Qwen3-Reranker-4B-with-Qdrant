@@ -41,6 +41,11 @@ dependencies = [
   "httpx>=0.27,<1",
 ]
 
+[project.urls]
+Homepage = "https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant"
+Repository = "https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant"
+Issues = "https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant/issues"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 
