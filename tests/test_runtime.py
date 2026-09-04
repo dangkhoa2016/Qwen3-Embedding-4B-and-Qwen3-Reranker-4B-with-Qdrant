@@ -1,7 +1,7 @@
 import pytest
-from qwen_dual_server.config import Settings
-from qwen_dual_server.memory import MemorySnapshot
-from qwen_dual_server.runtime import DualModelRuntime, MemoryHeadroomError
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.config import Settings
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.memory import MemorySnapshot
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.runtime import DualModelRuntime, MemoryHeadroomError
 
 
 class FakeEngine:

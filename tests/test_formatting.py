@@ -1,4 +1,4 @@
-from qwen_dual_server.formatting import (
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.formatting import (
     CANONICAL_EMBEDDING_INSTRUCTION,
     DEFAULT_RERANK_INSTRUCTION,
     RERANK_PREFIX,

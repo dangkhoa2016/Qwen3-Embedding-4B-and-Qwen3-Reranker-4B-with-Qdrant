@@ -1,6 +1,6 @@
 import torch
 
-from qwen_dual_server.tensor_ops import last_token_pool, normalize_embedding_fp32
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.tensor_ops import last_token_pool, normalize_embedding_fp32
 
 
 def test_last_token_pool_left_padding_uses_final_position():

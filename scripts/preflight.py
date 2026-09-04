@@ -12,8 +12,8 @@ import psutil
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from qwen_dual_server.memory import capture_memory_snapshot  # noqa: E402
-from qwen_dual_server.model_locator import find_model_candidates, validate_model_root  # noqa: E402
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.memory import capture_memory_snapshot  # noqa: E402
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.model_locator import find_model_candidates, validate_model_root  # noqa: E402
 
 
 def main() -> int:

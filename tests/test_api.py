@@ -3,9 +3,9 @@ from contextlib import asynccontextmanager
 import torch
 from fastapi.testclient import TestClient
 
-from qwen_dual_server.api import create_app
-from qwen_dual_server.config import Settings
-from qwen_dual_server.gate import QueueFullError
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.api import create_app
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.config import Settings
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.gate import QueueFullError
 
 
 class FakeRuntime:
@@ -101,3 +101,11 @@ def test_rate_limit_is_per_client(monkeypatch):
     with TestClient(app) as client:
         assert client.get("/v1/models", headers=auth()).status_code == 200
         assert client.get("/v1/models", headers=auth()).status_code == 429
+
+
+def test_public_api_identity_uses_new_project_name(monkeypatch):
+    app = create_app(make_settings(monkeypatch), FakeRuntime())
+    assert app.title == "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
+    with TestClient(app) as client:
+        body = client.get("/health").json()
+        assert body["service"] == "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"

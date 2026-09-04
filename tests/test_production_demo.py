@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from qwen_dual_server.production_demo import (
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.production_demo import (
     DemoConfig,
     ProductionDemoPipeline,
     format_qdrant_payload_for_rerank,
@@ -111,7 +111,7 @@ def test_pipeline_retrieves_five_reranks_three_and_displays_two():
 
 def test_hybrid_http_client_uses_existing_api_contract():
     import httpx
-    from qwen_dual_server.production_demo import HybridHttpClient
+    from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.production_demo import HybridHttpClient
 
     requests = []
 
@@ -141,7 +141,7 @@ def test_hybrid_http_client_uses_existing_api_contract():
 
 def test_qdrant_http_client_parses_query_api_points():
     import httpx
-    from qwen_dual_server.production_demo import QdrantHttpClient
+    from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.production_demo import QdrantHttpClient
 
     def handler(request: httpx.Request):
         assert request.url.path == "/collections/demo/points/query"
@@ -160,7 +160,7 @@ def test_qdrant_http_client_parses_query_api_points():
 
 def test_qdrant_http_client_falls_back_to_legacy_search_on_404():
     import httpx
-    from qwen_dual_server.production_demo import QdrantHttpClient
+    from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.production_demo import QdrantHttpClient
 
     paths = []
 
@@ -184,7 +184,7 @@ def test_qdrant_http_client_falls_back_to_legacy_search_on_404():
 
 def test_locate_snapshot_requires_exact_name_size_and_sha(tmp_path):
     import hashlib
-    from qwen_dual_server.production_demo import locate_snapshot
+    from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.production_demo import locate_snapshot
 
     nested = tmp_path / "dataset" / "version" / "1"
     nested.mkdir(parents=True)
@@ -212,7 +212,7 @@ def test_locate_snapshot_requires_exact_name_size_and_sha(tmp_path):
 
 def test_locate_snapshot_rejects_ambiguous_matches(tmp_path):
     import hashlib
-    from qwen_dual_server.production_demo import locate_snapshot
+    from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.production_demo import locate_snapshot
 
     payload = b"same"
     digest = hashlib.sha256(payload).hexdigest()
