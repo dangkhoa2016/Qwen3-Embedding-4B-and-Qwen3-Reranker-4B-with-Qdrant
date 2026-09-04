@@ -1,3 +1,6 @@
+# Pull request
+> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](PULL_REQUEST_TEMPLATE.vi.md)
+
 ## Summary
 
 Describe what this change does and why it is needed.
@@ -12,31 +15,31 @@ Describe what this change does and why it is needed.
 
 ## Qualification boundary
 
-- [ ] I checked whether this change touches a protected semantic file.
-- [ ] If a protected semantic file is touched, I have called that out explicitly and explained whether requalification is required.
+- [ ] I checked whether this change touches a qualification-sensitive file.
+- [ ] If it does, I explained whether fresh qualification evidence is required.
 
-Protected semantic files for publication-hygiene work:
+Qualification-sensitive files:
 
 ```text
-src/qwen_dual_server/config.py
-src/qwen_dual_server/gguf_reranker_engine.py
-src/qwen_dual_server/production_demo.py
+src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/config.py
+src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/gguf_reranker_engine.py
+src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/production_demo.py
 tests/test_gguf_reranker_engine.py
 tests/test_production_demo.py
 ```
 
 ## Verification
 
-List the exact commands run and paste/summarize their exact outcomes. Do not write “all tests pass” when the current verified audit baseline is `110 passed, 3 failed, 1 skipped`.
+List the exact commands run and their exact outcomes.
 
 ```text
 <commands and results>
 ```
 
-- [ ] No new regression failure was introduced.
-- [ ] Static validation appropriate to the changed files was run.
+- [ ] Relevant regression/static checks were run.
 - [ ] Build/manifest/re-extraction checks were rerun if package/publication files changed.
 - [ ] Secrets and private paths were removed from logs/evidence.
+- [ ] Documentation links and English/Vietnamese pairs were checked when documentation changed.
 
 ## Documentation / release impact
 
