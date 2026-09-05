@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "qwen3-embedding-4b-reranker-4b-qdrant"
 version = "1.0.0"
-description = "Production-oriented Qwen3 Embedding and Reranker stack for Qdrant, qualified for CPU inference with a reproducible 20K-point search demo"
+description = "Production-oriented Qwen3-Embedding-4B and Qwen3-Reranker-4B stack for Qdrant, qualified for CPU inference with a reproducible 20K-point search demo"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Đăng Khoa", email = "i.am@dangkhoa.dev" }]

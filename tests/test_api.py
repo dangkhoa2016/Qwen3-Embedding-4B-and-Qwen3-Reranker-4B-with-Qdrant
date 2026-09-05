@@ -105,7 +105,7 @@ def test_rate_limit_is_per_client(monkeypatch):
 
 def test_public_api_identity_uses_new_project_name(monkeypatch):
     app = create_app(make_settings(monkeypatch), FakeRuntime())
-    assert app.title == "Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant"
+    assert app.title == "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
     with TestClient(app) as client:
         body = client.get("/health").json()
         assert body["service"] == "qwen3-embedding-4b-reranker-4b-qdrant"

@@ -23,7 +23,7 @@ Bạn đã cân nhắc workaround đơn giản hơn hoặc luồng hiện có n�
 
 ## Ảnh hưởng đến qualification
 
-Thay đổi có chạm file semantic được bảo vệ, thay đổi hành vi Qwen3 embedding/reranking, thay đổi K=5 production-demo semantics hoặc authentication/OOM/timing gates không? Nếu có, hãy mô tả rõ tác động requalification.
+Thay đổi có chạm file semantic được bảo vệ, thay đổi hành vi Qwen3-Embedding-4B / Qwen3-Reranker-4B, thay đổi K=5 production-demo semantics hoặc authentication/OOM/timing gates không? Nếu có, hãy mô tả rõ tác động requalification.
 
 ## Evidence
 

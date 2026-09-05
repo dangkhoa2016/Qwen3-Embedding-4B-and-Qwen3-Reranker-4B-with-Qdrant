@@ -1,16 +1,17 @@
 # Hướng dẫn chạy Kaggle production demo
 > 🌐 Language / Ngôn ngữ: [English](guide-production-demo.md) | **Tiếng Việt**
 
-1. Attach model Transformers Qwen3-Embedding-4B.
-2. Attach model Qwen3-Reranker-4B Q4_K_M GGUF.
-3. Attach canonical Qdrant 20K Dataset chứa `knowledge_entities_qwen3_4b_text_v21-20260827T013824Z.snapshot`.
-4. Cung cấp qualified hardened llama runtime package mà notebook yêu cầu.
-5. Mở `notebooks/qwen3_embedding_reranker_qdrant_kaggle_demo.ipynb`.
-6. Dùng **Run All**.
+1. Attach `dangkhoa2016/qwen-qwen3-embedding-4b` → Transformers / `default` / Version `1`.
+2. Attach `dangkhoa2016/giladgd-qwen3-reranker-4b-gguf` chứa `Qwen3-Reranker-4B.Q4_K_M.gguf`.
+3. Attach `dangkhoa2016/qdrant-bilingual-search-canonical-v2-1-20k` chứa `knowledge_entities_qwen3_4b_text_v21-20260827T013824Z.snapshot`.
+4. Attach `dangkhoa2016/qwen3-reranker-4b-hardened-llama-cpp-runtime`.
+5. Đặt `Accelerator: None (CPU)` và `Internet: On`.
+6. Mở `notebooks/qwen3_embedding_reranker_qdrant_kaggle_demo.ipynb`.
+7. Dùng **Restart Session → Run All**.
 
-Không seed/re-embed 20K records. Notebook restore immutable canonical snapshot.
+Không seed hoặc re-embed collection 20K. Notebook restore immutable canonical snapshot.
 
-Qualified default:
+Qualified configuration:
 
 ```text
 RETRIEVAL_TOP_K=5
@@ -18,9 +19,12 @@ RERANK_TOP_K=5
 DISPLAY_TOP_K=5
 LLAMA_SERVER_THREADS=2
 TORCH_NUM_THREADS=2
-K5_DEFAULT=ACCEPT
-K2_FALLBACK=NOT_JUSTIFIED
-FINAL_RELEASE_DEFAULT=K5_READY
 ```
 
-Accepted R10 run pass 3/3 semantic cases với zero cgroup OOM/OOM-kill deltas và hoàn tất post-package Run All trong `594.964s`, dưới budget `600s`. K=2 không được justified bởi final qualification evidence.
+Publication-ready qualification reference pass 3/3 semantic cases, zero cgroup OOM/OOM-kill, qualified pipeline `468.489s`, notebook total `469.782s`, trong threshold `600s`.
+
+Xem `PRODUCTION_QUALIFICATION.vi.md` và `PRODUCTION_DEMO_PROVENANCE.vi.md`.
+
+## Run All lặp lại an toàn
+
+Lần **Run All** thứ hai trong cùng session trước tiên thực hiện verified-owned cleanup. Process chưa được xác minh trên các port `6333`, `8000` hoặc `8081` không bao giờ bị terminate tự động.

@@ -23,7 +23,7 @@ What simpler workaround or existing path did you consider?
 
 ## Qualification impact
 
-Would this touch a protected semantic file, change Qwen3 embedding/reranking behavior, change K=5 production-demo semantics, or alter authentication/OOM/timing gates? If yes, explain the requalification impact explicitly.
+Would this touch a protected semantic file, change Qwen3-Embedding-4B / Qwen3-Reranker-4B behavior, change K=5 production-demo semantics, or alter authentication/OOM/timing gates? If yes, explain the requalification impact explicitly.
 
 ## Evidence
 

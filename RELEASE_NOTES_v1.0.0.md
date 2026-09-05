@@ -4,88 +4,39 @@
 **Project:** **Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant**  
 **Python distribution:** `qwen3-embedding-4b-reranker-4b-qdrant==1.0.0`  
 **Git tag:** `v1.0.0`
-Repository: https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant. GitHub source publication, tagged GitHub Release publication, and package-index publication are separate release channels and are verified independently.
 
-## First public release identity
-
-`1.0.0` is the approved first public version of this project. Internal qualification labels such as `v0.2.3c` and the temporary local packaging label `0.2.3rc1` were never public releases.
-
-```text
-Package: qwen3-embedding-4b-reranker-4b-qdrant
-Version: 1.0.0
-Author: Đăng Khoa <i.am@dangkhoa.dev>
-License: MIT
-Python: >=3.10
-```
+`1.0.0` is the first public release.
 
 ## Highlights
 
-- CPU-oriented FastAPI service for Qwen3 embedding and reranking workloads.
-- Qwen3-Embedding-4B qualified on the Transformers / PyTorch CPU FP16 path.
-- Qwen3-Reranker-4B `Q4_K_M` GGUF production-demo path through the hardened llama.cpp runtime.
-- Qdrant `1.18.3` canonical 20K bilingual snapshot workflow.
-- Bearer-authenticated `/v1/*` API with fail-closed startup/authentication behavior and conservative CPU concurrency limits.
-- Reproducible Kaggle production-demo notebook, provenance records, and operator scripts.
+- CPU-oriented FastAPI service for Qwen3-Embedding-4B embeddings and Qwen3-Reranker-4B reranking.
+- Qualified Qwen3-Embedding-4B Transformers / PyTorch CPU FP16 path.
+- Qualified Qwen3-Reranker-4B `Q4_K_M` GGUF path through the pinned hardened llama.cpp runtime.
+- Qdrant `1.18.3` canonical 20K bilingual snapshot.
+- Reproducible four-input Kaggle production demo.
 
-## Qualified production baseline
+## Production qualification
 
-- Stage-II R10 fresh Kaggle qualification: PASS.
-- Stage-II corrective chain R3→R10: CLOSED.
-- Three of three semantic cases: PASS.
-- cgroup OOM and OOM-kill deltas: zero.
-- Post-package Run All: `594.964s` within the `600s` gate.
-- `K5_DEFAULT=ACCEPT`.
-- `K2_FALLBACK=NOT_JUSTIFIED`.
-- `FINAL_RELEASE_DEFAULT=K5_READY`.
+- Fresh Kaggle CPU qualification: **PASS**.
+- Semantic validation: **3/3 PASS**.
+- cgroup OOM events: **0**.
+- cgroup OOM-kill events: **0**.
+- Qualified pipeline: `468.489s`.
+- End-to-end Run All: `469.782s`, within `600s`.
+- Same-session repeated Run All: **PASS** with fail-closed owned-process cleanup.
+- Default retrieval depth: `K=5`.
 
-The timing result is specific to the qualified environment and is not a general CPU performance guarantee.
+## Verification
 
-## Packaging and publication hygiene
+GitHub CI verifies Python 3.10 and 3.12, the blocking regression suite, canonical model naming, publication-ready notebook structure, source manifest integrity, and wheel/sdist construction.
 
-The pre-publication work prepares:
+## Packaging and deployment
 
-- package/runtime identity `1.0.0`;
-- MIT SPDX package metadata and shipped `LICENSE` file;
-- author metadata;
-- README long-description/package metadata;
-- public-facing keywords/classifiers with the real GitHub project URLs;
-- `MAX_INSTRUCTION_CHARS=1024` in the example configuration;
-- source manifest/build hygiene;
-- `SECURITY.md` and `CONTRIBUTING.md`;
-- `.github` issue and pull-request templates for the public repository.
+Python distribution: `qwen3-embedding-4b-reranker-4b-qdrant==1.0.0`. The wheel filename uses the normalized stem `qwen3_embedding_4b_reranker_4b_qdrant` as required by Python packaging conventions.
 
-The qualified production semantic files remain protected by byte-identity checks during this publication-hygiene work.
+Model weights, GGUF files, PyTorch, the hardened llama.cpp runtime, and the Qdrant snapshot are external inputs and are not bundled.
 
-## External artifacts
-
-Large model weights, the GGUF reranker artifact, hardened llama runtime, PyTorch runtime, and Qdrant snapshot are not bundled with the Python package. The qualified identities and reproduction requirements are documented in `STAGE2_R10_QUALIFICATION.md` and `PRODUCTION_DEMO_PROVENANCE.md`.
-
-## Security and contributions
-
-- Vulnerability reporting and deployment-security guidance: `SECURITY.md`.
-- Contribution, testing, and requalification-boundary guidance: `CONTRIBUTING.md`.
-
-Security vulnerabilities should be reported privately rather than disclosed in a public issue.
-
-## Known test baseline
-
-The preserved pre-hardening audit baseline was `111 passed, 3 failed, 1 skipped`. A later preserved local audit snapshot from bilingual/governance/CI hardening recorded:
-
-```text
-HISTORICAL_LOCAL_EXPANDED_SUITE=116 passed, 3 failed, 1 skipped
-KNOWN_HISTORICAL_FAILURES=3
-NEW_REGRESSION_FAILURES=0
-FAILURE_SET_MATCHES_PRE_HARDENING_BASELINE=PASS
-```
-
-Those numbers are historical audit evidence, not the live blocking-CI count. The release-candidate blocking gate records:
-
-```text
-BLOCKING_CI_SUITE=119 passed, 1 skipped, 3 deselected
-HISTORICAL_COMPATIBILITY_PROBES=executed separately
-```
-
-The three engine-contract nodes were the complete failure set in the preserved historical local audit. CI executes them separately as compatibility probes, so their result under the current dependency environment does not rewrite that historical record. The precise release claim is that the blocking CI gates pass; this release note does not claim a universally zero-failure test suite across dependency environments.
+See `PRODUCTION_QUALIFICATION.md` and `PRODUCTION_DEMO_PROVENANCE.md`.
 
 ## Publication channels
 
