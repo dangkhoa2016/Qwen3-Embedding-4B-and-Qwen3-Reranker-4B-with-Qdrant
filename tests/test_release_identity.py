@@ -1,5 +1,8 @@
 from pathlib import Path
-import tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -7,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_pyproject_first_public_release_identity():
     data = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     project = data["project"]
-    assert project["name"] == "qwen3-dual-4b-cpu-rest-server"
+    assert project["name"] == "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"
     assert project["version"] == "1.0.0"
     assert project["authors"] == [{"name": "Đăng Khoa", "email": "i.am@dangkhoa.dev"}]
     assert project["license"] == "MIT"
@@ -15,10 +18,12 @@ def test_pyproject_first_public_release_identity():
     assert "License :: OSI Approved :: MIT License" not in project["classifiers"]
 
 
-def test_runtime_version_is_1_0_0():
+def test_runtime_version_and_public_identity_are_1_0_0():
     namespace = {}
-    exec((ROOT / "src/qwen_dual_server/__init__.py").read_text(encoding="utf-8"), namespace)
+    exec((ROOT / "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/__init__.py").read_text(encoding="utf-8"), namespace)
     assert namespace["__version__"] == "1.0.0"
+    assert namespace["__project_name__"] == "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
+    assert namespace["__display_name__"] == "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
 
 
 def test_mit_license_identifies_author_and_year():
@@ -26,3 +31,34 @@ def test_mit_license_identifies_author_and_year():
     assert text.startswith("MIT License")
     assert "Copyright (c) 2026 Đăng Khoa" in text
     assert "Permission is hereby granted, free of charge" in text
+
+
+def test_public_repository_identity_matches_new_repository():
+    data = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    expected_url = "https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant"
+    expected_display = "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
+    assert data["project"]["urls"] == {
+        "Homepage": expected_url,
+        "Repository": expected_url,
+        "Issues": expected_url + "/issues",
+    }
+    namespace = {}
+    exec((ROOT / "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/__init__.py").read_text(encoding="utf-8"), namespace)
+    assert namespace["__display_name__"] == expected_display
+    assert expected_url in (ROOT / ".github" / "SECURITY.md").read_text(encoding="utf-8")
+    assert expected_url in (ROOT / ".github" / "SECURITY.vi.md").read_text(encoding="utf-8")
+
+
+def test_retired_repository_slug_is_absent_from_public_tree():
+    retired = "Qwen3-Embedding-" + "Reranker-Qdrant-Stack"
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or ".git" in path.parts or ".pytest_cache" in path.parts:
+            continue
+        data = path.read_bytes()
+        if b"\0" in data[:8192]:
+            continue
+        try:
+            text = data.decode("utf-8")
+        except UnicodeDecodeError:
+            continue
+        assert retired not in text, path.relative_to(ROOT)
