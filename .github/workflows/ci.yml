@@ -1,0 +1,135 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+            pyproject.toml
+
+      - name: Install CI dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+          python -m pip install -r requirements-dev.txt
+
+      - name: Validate source manifest structure and coverage
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+          manifest = Path("MANIFEST.sha256")
+          assert manifest.is_file(), "MANIFEST.sha256 is missing"
+          entries, seen = [], set()
+          for lineno, raw in enumerate(manifest.read_text(encoding="utf-8").splitlines(), 1):
+              match = re.fullmatch(r"([0-9a-f]{64})  (.+)", raw)
+              assert match, f"invalid MANIFEST.sha256 line {lineno}: {raw!r}"
+              _, path = match.groups()
+              assert path not in seen, f"duplicate manifest path: {path}"
+              assert Path(path).is_file(), f"manifest path does not exist: {path}"
+              seen.add(path)
+              entries.append(path)
+          tracked = set(subprocess.check_output(["git", "ls-files"], text=True).splitlines())
+          expected = tracked - {"MANIFEST.sha256"}
+          assert seen == expected, (
+              f"manifest coverage mismatch; missing={sorted(expected - seen)}, "
+              f"extra={sorted(seen - expected)}"
+          )
+          print(f"MANIFEST_STRUCTURE={len(entries)}/{len(expected)} PASS")
+          PY
+
+      - name: Verify frozen source manifest hashes
+        run: sha256sum -c MANIFEST.sha256
+
+      - name: Compile Python sources
+        run: python -m compileall -q src scripts tools tests
+
+      - name: Validate shell syntax
+        shell: bash
+        run: |
+          while IFS= read -r -d '' file; do
+            bash -n "$file"
+          done < <(find scripts tools -type f -name '*.sh' -print0)
+
+      - name: Validate canonical model naming
+        run: python scripts/check-canonical-model-naming.py .
+
+      - name: Validate publication-ready Kaggle notebook
+        run: python scripts/validate-publication-notebook.py notebooks/qwen3_embedding_reranker_qdrant_kaggle_demo.ipynb
+
+      - name: Run full regression suite
+        env:
+          PYTHONPATH: src
+        run: pytest -q
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: quality
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install build frontend
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+
+      - name: Build wheel and sdist
+        run: |
+          export SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
+          python -m build
+
+      - name: Verify distribution metadata and contents
+        run: python scripts/verify_distribution.py --dist-dir dist
+
+      - name: Upload canonical tag distributions
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v7
+        with:
+          name: qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant-${{ github.ref_name }}-dist
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
