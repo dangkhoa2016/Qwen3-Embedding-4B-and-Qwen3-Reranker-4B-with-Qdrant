@@ -1,4 +1,7 @@
 from pathlib import Path
+import re
+import subprocess
+
 try:
     import tomllib
 except ModuleNotFoundError:  # Python 3.10
@@ -26,22 +29,25 @@ def test_public_package_metadata_is_current():
 def test_public_landing_and_governance_docs_are_complete():
     readme = read("README.md")
     for required in [
-        "## What this project provides", "## Production qualification",
+        "## Overview", "## Architecture", "## Capabilities",
+        "## Production qualification", "## Requirements and external inputs",
         "## Installation", "## Quick start", "## API overview",
-        "## Qualified Qdrant production demo", "## Security",
-        "## Contributing", "## Known limitations",
-        "PRODUCTION_QUALIFICATION.md", "PRODUCTION_DEMO_PROVENANCE.md",
+        "## Production demo", "## Reproducibility and provenance",
+        "## Documentation", "## Security", "## Contributing",
+        "## Known limitations", "## Release", "## License",
+        "docs/production-demo/qualification.md",
+        "docs/production-demo/provenance.md",
         "Retrieval default: K=5", "MAX_INSTRUCTION_CHARS=1024",
     ]:
         assert required in readme, required
 
-    security = read("SECURITY.md")
+    security = read(".github/SECURITY.md")
     assert "Do not open a public issue" in security
     assert "i.am@dangkhoa.dev" in security
     assert "ALLOW_INSECURE_NO_AUTH" in security
     assert "TRUST_PROXY_HEADERS" in security
 
-    contributing = read("CONTRIBUTING.md")
+    contributing = read(".github/CONTRIBUTING.md")
     for required in [
         "Retrieval default: K=5", "MAX_INSTRUCTION_CHARS=1024",
         "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/config.py",
@@ -86,7 +92,7 @@ def test_current_public_docs_do_not_expose_internal_development_labels():
 
 
 def test_public_qualification_and_provenance_are_outcome_based():
-    qualification = read("PRODUCTION_QUALIFICATION.md")
+    qualification = read("docs/production-demo/qualification.md")
     for required in [
         "Production qualification: PASS", "Retrieval default: K=5",
         "Semantic validation: 3/3 PASS", "Verified Run All: 469.782s",
@@ -94,17 +100,19 @@ def test_public_qualification_and_provenance_are_outcome_based():
     ]:
         assert required in qualification, required
 
-    provenance = read("PRODUCTION_DEMO_PROVENANCE.md")
+    provenance = read("docs/production-demo/provenance.md")
     assert "Version=1.0.0" in provenance
     assert "snapshot SHA256=71f12fe14ef51966069347290ad15302d389e488d7904dab6cf0cf190f43064f" in provenance
 
 
-def test_every_markdown_file_has_a_vietnamese_companion_and_standard_switch():
+def test_every_public_markdown_pair_has_standard_language_switch():
+    excluded_prefixes = (".github/ISSUE_TEMPLATE/",)
     canonical = sorted(
         p for p in ROOT.rglob("*.md")
         if ".git" not in p.parts
         and ".pytest_cache" not in p.parts
         and not p.name.endswith(".vi.md")
+        and not any(str(p.relative_to(ROOT)).startswith(prefix) for prefix in excluded_prefixes)
     )
     assert canonical
     for path in canonical:
@@ -123,6 +131,8 @@ def test_github_community_and_ci_files_are_current():
         ".github/PULL_REQUEST_TEMPLATE.md", ".github/PULL_REQUEST_TEMPLATE.vi.md",
         ".github/CODE_OF_CONDUCT.md", ".github/CODE_OF_CONDUCT.vi.md",
         ".github/SUPPORT.md", ".github/SUPPORT.vi.md",
+        ".github/SECURITY.md", ".github/SECURITY.vi.md",
+        ".github/CONTRIBUTING.md", ".github/CONTRIBUTING.vi.md",
         ".github/CODEOWNERS", ".github/dependabot.yml", ".github/workflows/ci.yml",
     ]:
         assert (ROOT / path).is_file(), path
@@ -131,6 +141,7 @@ def test_github_community_and_ci_files_are_current():
     assert "actions/checkout@v7" in ci
     assert "actions/setup-python@v7" in ci
     assert "actions/upload-artifact@v7" in ci
+    assert not re.search(r"uses:\s+actions/[\w-]+@[0-9a-f]{40}(?:\s|$)", ci)
     assert 'python-version: ["3.10", "3.12"]' in ci
     assert "continue-on-error: true" not in ci
     assert "--deselect=" not in ci
@@ -144,18 +155,18 @@ def test_github_community_and_ci_files_are_current():
     assert read(".github/CODEOWNERS").startswith("# Default repository owner.")
 
 
-def test_release_notes_are_current_and_bilingual():
-    en = read("RELEASE_NOTES_v1.0.0.md")
-    vi = read("RELEASE_NOTES_v1.0.0.vi.md")
-    for required in [
-        "## Production qualification", "## Verification",
-        "## Publication channels", "Release identity: v1.0.0",
-    ]:
+def test_release_notes_are_current_bilingual_and_github_release_focused():
+    en = read("docs/releases/v1.0.0.md")
+    vi = read("docs/releases/v1.0.0.vi.md")
+    h1 = "# Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant - v1.0.0"
+    assert en.startswith(h1 + "\n")
+    assert vi.startswith(h1 + "\n")
+    for required in ["## Production qualification", "## Verification"]:
         assert required in en, required
     assert "## Kiểm chứng production" in vi
     assert "## Xác minh" in vi
-    assert "## Kênh phát hành" in vi
     for text in [en, vi, read("README.md"), read("README.vi.md")]:
+        assert "PyPI" not in text
         assert "TAG=NONE" not in text
         assert "RELEASE=NONE" not in text
         assert "pre-tag" not in text.lower()
@@ -164,52 +175,34 @@ def test_release_notes_are_current_and_bilingual():
 def test_sdist_manifest_includes_bilingual_core_governance_docs():
     manifest = read("MANIFEST.in")
     for path in [
-        "README.vi.md", "SECURITY.md", "SECURITY.vi.md",
-        "CONTRIBUTING.md", "CONTRIBUTING.vi.md",
+        "README.vi.md",
+        ".github/SECURITY.md", ".github/SECURITY.vi.md",
+        ".github/CONTRIBUTING.md", ".github/CONTRIBUTING.vi.md",
     ]:
         assert f"include {path}" in manifest
+    assert "recursive-include docs *.md" in manifest
 
 
 def test_tracked_paths_and_utf8_text_are_free_of_retired_internal_labels():
-    import subprocess
-
     retired_path_tokens = [
-        "v0" + "23",
-        "v0" + "23c",
-        "pre" + "_publish",
-        "pre" + "-publish",
-        "stage2" + "_r10",
-        "qwen3" + "-dual-4b",
+        "v0" + "23", "v0" + "23c", "pre" + "_publish", "pre" + "-publish",
+        "stage2" + "_r10", "qwen3" + "-dual-4b",
     ]
     retired_content_tokens = [
-        "v0" + ".1.0",
-        "v0" + ".1.1",
-        "v0" + ".2.3",
-        "v0" + "23",
-        "v0" + "23c",
-        "Stage" + "-II",
-        "STAGE2" + "_R10",
-        "STAGE2" + "_R3_TO_R10",
-        "R3" + "→R10",
-        "EXPECTED" + "_H3",
-        "NATIVE" + "_INSTRUCTION_RED",
-        "K5" + "_DEFAULT=ACCEPT",
-        "K2" + "_FALLBACK=NOT_JUSTIFIED",
-        "FINAL" + "_RELEASE_DEFAULT=K5_READY",
-        "qwen3" + "-dual-4b",
-        "DUAL" + "_4B_TRANSFORMERS_TORCHAO_INT8",
-        "Experimental" + " copy only",
+        "v0" + ".1.0", "v0" + ".1.1", "v0" + ".2.3", "v0" + "23", "v0" + "23c",
+        "Stage" + "-II", "STAGE2" + "_R10", "STAGE2" + "_R3_TO_R10", "R3" + "→R10",
+        "EXPECTED" + "_H3", "NATIVE" + "_INSTRUCTION_RED",
+        "K5" + "_DEFAULT=ACCEPT", "K2" + "_FALLBACK=NOT_JUSTIFIED",
+        "FINAL" + "_RELEASE_DEFAULT=K5_READY", "qwen3" + "-dual-4b",
+        "DUAL" + "_4B_TRANSFORMERS_TORCHAO_INT8", "Experimental" + " copy only",
         "FALLBACK" + "_TO_K2",
     ]
 
-    tracked = subprocess.check_output(
-        ["git", "ls-files", "-z"], cwd=ROOT
-    ).decode("utf-8").split("\0")
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode("utf-8").split("\0")
     for rel in filter(None, tracked):
         lowered = rel.lower()
         for token in retired_path_tokens:
             assert token not in lowered, f"retired path token {token!r}: {rel}"
-
         data = (ROOT / rel).read_bytes()
         if b"\0" in data[:8192]:
             continue
