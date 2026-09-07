@@ -15,7 +15,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -172,3 +172,32 @@ jobs:
           path: dist/*
           if-no-files-found: error
           retention-days: 14
+
+  persist-corrective-candidate:
+    name: Persist corrective candidate
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
+    needs: [quality, package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate branch
+        uses: actions/checkout@v7
+        with:
+          ref: prelaunch-repository-corrective-candidate
+          fetch-depth: 0
+
+      - name: Apply verified identity migration
+        run: python tools/prelaunch_corrective/apply_identity.py
+
+      - name: Persist candidate-only diff
+        shell: bash
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "CANDIDATE_PERSIST=NO_CHANGES"
+            exit 0
+          fi
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(corrective): persist verified identity migration"
+          git push origin HEAD:prelaunch-repository-corrective-candidate
+          echo "CANDIDATE_PERSIST=PASS"
