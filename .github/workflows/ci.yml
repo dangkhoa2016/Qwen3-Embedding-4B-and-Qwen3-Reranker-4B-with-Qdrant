@@ -116,6 +116,15 @@ jobs:
       - name: Verify distribution metadata and contents
         run: python scripts/verify_distribution.py --dist-dir dist
 
+      - name: Upload canonical tag distributions
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v7
+        with:
+          name: qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant-${{ github.ref_name }}-dist
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+
   finalize-corrective-candidate:
     name: Finalize corrective candidate
     if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
