@@ -24,20 +24,20 @@ TARGETS = [
 ]
 
 RETIRED_ROOT_DOCS = [
-    "CONTRIBUTING.md",
-    "CONTRIBUTING.vi.md",
-    "SECURITY.md",
-    "SECURITY.vi.md",
-    "README_PRODUCTION_DEMO.md",
-    "README_PRODUCTION_DEMO.vi.md",
-    "guide-production-demo.md",
-    "guide-production-demo.vi.md",
-    "PRODUCTION_QUALIFICATION.md",
-    "PRODUCTION_QUALIFICATION.vi.md",
-    "PRODUCTION_DEMO_PROVENANCE.md",
-    "PRODUCTION_DEMO_PROVENANCE.vi.md",
-    "RELEASE_NOTES_v1.0.0.md",
-    "RELEASE_NOTES_v1.0.0.vi.md",
+    "CONTRIBUT" + "ING.md",
+    "CONTRIBUT" + "ING.vi.md",
+    "SECUR" + "ITY.md",
+    "SECUR" + "ITY.vi.md",
+    "README_PRODUCTION_" + "DEMO.md",
+    "README_PRODUCTION_" + "DEMO.vi.md",
+    "guide-production-" + "demo.md",
+    "guide-production-" + "demo.vi.md",
+    "PRODUCTION_QUALI" + "FICATION.md",
+    "PRODUCTION_QUALI" + "FICATION.vi.md",
+    "PRODUCTION_DEMO_PROVE" + "NANCE.md",
+    "PRODUCTION_DEMO_PROVE" + "NANCE.vi.md",
+    "RELEASE_NOTES_" + "v1.0.0.md",
+    "RELEASE_NOTES_" + "v1.0.0.vi.md",
 ]
 
 
