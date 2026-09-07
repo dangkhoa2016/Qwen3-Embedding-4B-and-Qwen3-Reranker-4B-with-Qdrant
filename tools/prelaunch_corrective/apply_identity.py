@@ -10,6 +10,8 @@ OLD_STEM = "qwen3" + "_embedding_4b_reranker_4b_qdrant"
 NEW_STEM = "qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant"
 OLD_IMPORT = "qwen3" + "_qdrant"
 NEW_IMPORT = NEW_STEM
+DISPLAY_NAME = "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
+CANONICAL_SLUG = "Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant"
 
 ACTION_REPLACEMENTS = {
     "actions/checkout@" + "3d3c42e5aac5ba805825da76410c181273ba90b1 # v7": "actions/checkout@v7",
@@ -41,6 +43,11 @@ def replace_text(path: Path) -> bool:
     updated = text.replace(OLD_DIST, NEW_DIST).replace(OLD_STEM, NEW_STEM).replace(OLD_IMPORT, NEW_IMPORT)
     for old, new in ACTION_REPLACEMENTS.items():
         updated = updated.replace(old, new)
+    if path.name == "test_release_identity.py":
+        updated = updated.replace(
+            f'assert namespace["__project_name__"] == "{NEW_DIST}"',
+            f'assert namespace["__project_name__"] == "{DISPLAY_NAME}"',
+        )
     if updated == text:
         return False
     path.write_text(updated, encoding="utf-8")
@@ -63,10 +70,10 @@ def main() -> None:
     if not init_path.is_file():
         raise SystemExit(f"missing canonical package: {init_path}")
     init_path.write_text(
-        '__version__ = "1.0.0"\n'
-        '__project_name__ = "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"\n'
-        '__project_slug__ = "Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant"\n'
-        '__distribution_name__ = "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"\n'
+        f'__version__ = "1.0.0"\n'
+        f'__project_name__ = "{DISPLAY_NAME}"\n'
+        f'__project_slug__ = "{CANONICAL_SLUG}"\n'
+        f'__distribution_name__ = "{NEW_DIST}"\n'
         '__display_name__ = __project_name__\n',
         encoding="utf-8",
     )
