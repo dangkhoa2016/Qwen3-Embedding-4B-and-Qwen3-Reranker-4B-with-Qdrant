@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 OLD_DIST = "qwen3" + "-embedding-4b-reranker-4b-qdrant"
@@ -58,7 +59,11 @@ def main() -> None:
     old_package = ROOT / "src" / OLD_IMPORT
     new_package = ROOT / "src" / NEW_IMPORT
     if old_package.exists() and not new_package.exists():
-        old_package.rename(new_package)
+        subprocess.run(
+            ["git", "mv", str(old_package.relative_to(ROOT)), str(new_package.relative_to(ROOT))],
+            cwd=ROOT,
+            check=True,
+        )
     elif old_package.exists() and new_package.exists():
         raise SystemExit("both old and new package directories exist")
 
@@ -77,6 +82,17 @@ def main() -> None:
         '__display_name__ = __project_name__\n',
         encoding="utf-8",
     )
+
+    api_path = new_package / "api.py"
+    api_text = api_path.read_text(encoding="utf-8")
+    api_text = api_text.replace(
+        "from . import __display_name__, __project_name__, __version__",
+        "from . import __display_name__, __distribution_name__, __version__",
+    ).replace(
+        'return {"status": "ok", "service": __project_name__, "version": __version__}',
+        'return {"status": "ok", "service": __distribution_name__, "version": __version__}',
+    )
+    api_path.write_text(api_text, encoding="utf-8")
 
     print(f"IDENTITY_MIGRATION_TEXT_FILES_CHANGED={changed}")
     print(f"CANONICAL_IMPORT_NAMESPACE={NEW_IMPORT}")
