@@ -2,14 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [main, prelaunch-repository-corrective-candidate]
+    branches: [main]
     tags: ["v*"]
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -29,16 +29,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Apply corrective identity candidate
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
-        run: python tools/prelaunch_corrective/apply_identity.py
-
-      - name: Apply corrective documentation candidate
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
-        run: |
-          python tools/prelaunch_corrective/apply_docs.py
-          python tools/prelaunch_corrective/normalize_doc_language_switches.py
-
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -54,6 +44,35 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
           python -m pip install -r requirements-dev.txt
+
+      - name: Validate source manifest structure and coverage
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+          manifest = Path("MANIFEST.sha256")
+          assert manifest.is_file(), "MANIFEST.sha256 is missing"
+          entries, seen = [], set()
+          for lineno, raw in enumerate(manifest.read_text(encoding="utf-8").splitlines(), 1):
+              match = re.fullmatch(r"([0-9a-f]{64})  (.+)", raw)
+              assert match, f"invalid MANIFEST.sha256 line {lineno}: {raw!r}"
+              _, path = match.groups()
+              assert path not in seen, f"duplicate manifest path: {path}"
+              assert Path(path).is_file(), f"manifest path does not exist: {path}"
+              seen.add(path)
+              entries.append(path)
+          tracked = set(subprocess.check_output(["git", "ls-files"], text=True).splitlines())
+          expected = tracked - {"MANIFEST.sha256"}
+          assert seen == expected, (
+              f"manifest coverage mismatch; missing={sorted(expected - seen)}, "
+              f"extra={sorted(seen - expected)}"
+          )
+          print(f"MANIFEST_STRUCTURE={len(entries)}/{len(expected)} PASS")
+          PY
+
+      - name: Verify frozen source manifest hashes
+        run: sha256sum -c MANIFEST.sha256
 
       - name: Compile Python sources
         run: python -m compileall -q src scripts tools tests
@@ -86,16 +105,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Apply corrective identity candidate
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
-        run: python tools/prelaunch_corrective/apply_identity.py
-
-      - name: Apply corrective documentation candidate
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
-        run: |
-          python tools/prelaunch_corrective/apply_docs.py
-          python tools/prelaunch_corrective/normalize_doc_language_switches.py
-
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -124,27 +133,3 @@ jobs:
           path: dist/*
           if-no-files-found: error
           retention-days: 14
-
-  finalize-corrective-candidate:
-    name: Finalize corrective candidate
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
-    needs: [quality, package]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout candidate branch
-        uses: actions/checkout@v7
-        with:
-          ref: prelaunch-repository-corrective-candidate
-          fetch-depth: 0
-
-      - name: Finalize public candidate tree
-        run: python tools/prelaunch_corrective/finalize_candidate.py
-
-      - name: Commit and push final candidate
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(corrective): freeze verified final candidate tree"
-          git push origin HEAD:prelaunch-repository-corrective-candidate
-          echo "FINAL_CANDIDATE_PUSH=PASS"
