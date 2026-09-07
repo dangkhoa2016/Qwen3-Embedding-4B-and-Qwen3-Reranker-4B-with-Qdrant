@@ -1,0 +1,257 @@
+name: Prelaunch Tag and Release Corrective
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: prelaunch-tag-release-corrective
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event.pull_request.head.ref == 'prelaunch-tag-release-executor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant
+      EXPECTED_MAIN: a0e772f4c67c6a1552e29f76dfc59bf7efc6a2cd
+      OLD_TAG_OBJECT: 5c973c61483c22110417a419b71ec85a0c920b87
+      OLD_TAG_TARGET: cf831e90f9e762033b914ba66906fbc710f36bb8
+      RELEASE_ID: '384014172'
+      TAGGER_DATE: '2026-09-07T10:21:36Z'
+      ARTIFACT_NAME: qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant-v1.0.0-dist
+      WHEEL_NAME: qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant-1.0.0-py3-none-any.whl
+      SDIST_NAME: qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant-1.0.0.tar.gz
+
+    steps:
+      - name: Checkout reconstructed main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Verify frozen publication preconditions
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee -a tag-release.log) 2>&1
+
+          test "$(git rev-parse HEAD)" = "$EXPECTED_MAIN"
+          test "$(gh api "repos/$REPO/git/refs/heads/main" --jq '.object.sha')" = "$EXPECTED_MAIN"
+
+          tag_object="$(gh api "repos/$REPO/git/refs/tags/v1.0.0" --jq '.object.sha')"
+          tag_type="$(gh api "repos/$REPO/git/refs/tags/v1.0.0" --jq '.object.type')"
+          test "$tag_object" = "$OLD_TAG_OBJECT"
+          test "$tag_type" = tag
+          tag_target="$(gh api "repos/$REPO/git/tags/$tag_object" --jq '.object.sha')"
+          test "$tag_target" = "$OLD_TAG_TARGET"
+
+          release_id="$(gh api "repos/$REPO/releases/tags/v1.0.0" --jq '.id')"
+          test "$release_id" = "$RELEASE_ID"
+          test "$(gh api "repos/$REPO/releases/tags/v1.0.0" --jq '.draft')" = false
+          test "$(gh api "repos/$REPO/releases/tags/v1.0.0" --jq '.prerelease')" = false
+
+          echo "PRECONDITION_MAIN=$EXPECTED_MAIN PASS"
+          echo "PRECONDITION_OLD_TAG_OBJECT=$OLD_TAG_OBJECT PASS"
+          echo "PRECONDITION_RELEASE_ID=$RELEASE_ID PASS"
+
+      - name: Recreate annotated v1.0.0 tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee -a tag-release.log) 2>&1
+
+          git config user.name 'Đăng Khoa'
+          git config user.email 'i.am@dangkhoa.dev'
+          git tag -d v1.0.0 >/dev/null 2>&1 || true
+          GIT_COMMITTER_NAME='Đăng Khoa' \
+          GIT_COMMITTER_EMAIL='i.am@dangkhoa.dev' \
+          GIT_COMMITTER_DATE="$TAGGER_DATE" \
+            git tag -a v1.0.0 "$EXPECTED_MAIN" \
+              -m 'Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant v1.0.0'
+
+          new_tag_object="$(git rev-parse v1.0.0)"
+          test "$(git cat-file -t "$new_tag_object")" = tag
+          test "$(git rev-parse 'v1.0.0^{}')" = "$EXPECTED_MAIN"
+          test "$(git for-each-ref refs/tags/v1.0.0 --format='%(taggername)')" = 'Đăng Khoa'
+          test "$(git for-each-ref refs/tags/v1.0.0 --format='%(taggeremail)' | tr -d '<>')" = 'i.am@dangkhoa.dev'
+          test "$(git for-each-ref refs/tags/v1.0.0 --format='%(subject)')" = 'Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant v1.0.0'
+
+          git push --force origin refs/tags/v1.0.0
+          git fetch --force origin refs/tags/v1.0.0:refs/tags/v1.0.0
+          test "$(git rev-parse 'v1.0.0^{}')" = "$EXPECTED_MAIN"
+
+          remote_object="$(gh api "repos/$REPO/git/refs/tags/v1.0.0" --jq '.object.sha')"
+          test "$(gh api "repos/$REPO/git/refs/tags/v1.0.0" --jq '.object.type')" = tag
+          test "$(gh api "repos/$REPO/git/tags/$remote_object" --jq '.object.sha')" = "$EXPECTED_MAIN"
+          test "$(gh api "repos/$REPO/git/tags/$remote_object" --jq '.tagger.name')" = 'Đăng Khoa'
+          test "$(gh api "repos/$REPO/git/tags/$remote_object" --jq '.tagger.email')" = 'i.am@dangkhoa.dev'
+          test "$(gh api "repos/$REPO/git/tags/$remote_object" --jq '.message' | tr -d '\r\n')" = 'Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant v1.0.0'
+
+          echo "NEW_TAG_OBJECT=$remote_object" | tee -a "$GITHUB_ENV"
+          echo "TAG_TARGET=$EXPECTED_MAIN PASS"
+          echo "ANNOTATED_TAG=PASS"
+
+      - name: Dispatch canonical tag CI and require success
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee -a tag-release.log) 2>&1
+
+          before="$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?event=workflow_dispatch&per_page=100" --jq '[.workflow_runs[].id] | max // 0')"
+          gh workflow run ci.yml --ref v1.0.0
+
+          run_id=''
+          for _ in $(seq 1 90); do
+            run_id="$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?event=workflow_dispatch&per_page=100" \
+              --jq ".workflow_runs | map(select(.id > $before and .head_sha == \"$EXPECTED_MAIN\" and .head_branch == \"v1.0.0\")) | sort_by(.id) | last | .id // empty")"
+            if [ -n "$run_id" ]; then
+              break
+            fi
+            sleep 2
+          done
+          test -n "$run_id"
+          echo "TAG_CI_RUN_ID=$run_id" | tee -a "$GITHUB_ENV"
+
+          gh run watch "$run_id" --exit-status
+
+          run_json="$(gh api "repos/$REPO/actions/runs/$run_id")"
+          test "$(jq -r '.head_sha' <<<"$run_json")" = "$EXPECTED_MAIN"
+          test "$(jq -r '.head_branch' <<<"$run_json")" = 'v1.0.0'
+          test "$(jq -r '.event' <<<"$run_json")" = 'workflow_dispatch'
+          test "$(jq -r '.conclusion' <<<"$run_json")" = success
+
+          jobs_json="$(gh api "repos/$REPO/actions/runs/$run_id/jobs?per_page=100")"
+          for job in 'Quality / Python 3.10' 'Quality / Python 3.12' 'Package'; do
+            test "$(jq -r --arg job "$job" '.jobs[] | select(.name == $job) | .conclusion' <<<"$jobs_json")" = success
+          done
+          echo "TAG_CI=PASS"
+
+      - name: Download and verify canonical tag artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee -a tag-release.log) 2>&1
+
+          rm -rf release-staging
+          mkdir release-staging
+          gh run download "$TAG_CI_RUN_ID" -n "$ARTIFACT_NAME" -D release-staging
+
+          test -f "release-staging/$WHEEL_NAME"
+          test -f "release-staging/$SDIST_NAME"
+          test "$(find release-staging -maxdepth 1 -type f | wc -l)" -eq 2
+          python scripts/verify_distribution.py --dist-dir release-staging
+
+          (
+            cd release-staging
+            sha256sum "$WHEEL_NAME" > "$WHEEL_NAME.sha256"
+            sha256sum "$SDIST_NAME" > "$SDIST_NAME.sha256"
+            sha256sum "$WHEEL_NAME" "$SDIST_NAME" > SHA256SUMS-v1.0.0.txt
+          )
+
+          wheel_sha="$(sha256sum "release-staging/$WHEEL_NAME" | awk '{print $1}')"
+          sdist_sha="$(sha256sum "release-staging/$SDIST_NAME" | awk '{print $1}')"
+          echo "WHEEL_SHA256=$wheel_sha" | tee -a "$GITHUB_ENV"
+          echo "SDIST_SHA256=$sdist_sha" | tee -a "$GITHUB_ENV"
+          echo "TAG_ARTIFACT_VERIFY=PASS"
+
+      - name: Replace release assets without an empty-asset gap
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee -a tag-release.log) 2>&1
+
+          gh release upload v1.0.0 \
+            "release-staging/$WHEEL_NAME" \
+            "release-staging/$WHEEL_NAME.sha256" \
+            "release-staging/$SDIST_NAME" \
+            "release-staging/$SDIST_NAME.sha256" \
+            --clobber
+          gh release upload v1.0.0 release-staging/SHA256SUMS-v1.0.0.txt --clobber
+
+          for name in "$WHEEL_NAME" "$WHEEL_NAME.sha256" "$SDIST_NAME" "$SDIST_NAME.sha256" SHA256SUMS-v1.0.0.txt; do
+            local_sha="$(sha256sum "release-staging/$name" | awk '{print $1}')"
+            remote_digest="$(gh api "repos/$REPO/releases/tags/v1.0.0" --jq ".assets[] | select(.name == \"$name\") | .digest")"
+            test "$remote_digest" = "sha256:$local_sha"
+          done
+
+          for old_name in \
+            qwen3_embedding_4b_reranker_4b_qdrant-1.0.0-py3-none-any.whl \
+            qwen3_embedding_4b_reranker_4b_qdrant-1.0.0-py3-none-any.whl.sha256 \
+            qwen3_embedding_4b_reranker_4b_qdrant-1.0.0.tar.gz \
+            qwen3_embedding_4b_reranker_4b_qdrant-1.0.0.tar.gz.sha256; do
+            asset_id="$(gh api "repos/$REPO/releases/tags/v1.0.0" --jq ".assets[] | select(.name == \"$old_name\") | .id")"
+            test -n "$asset_id"
+            gh api -X DELETE "repos/$REPO/releases/assets/$asset_id"
+          done
+          echo "RELEASE_ASSET_REPLACEMENT=PASS"
+
+      - name: Normalize release metadata and final-audit live publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee -a tag-release.log) 2>&1
+
+          gh release edit v1.0.0 \
+            --title 'v1.0.0' \
+            --notes-file docs/releases/v1.0.0.md \
+            --target "$EXPECTED_MAIN"
+
+          release_json="$(gh api "repos/$REPO/releases/tags/v1.0.0")"
+          test "$(jq -r '.id' <<<"$release_json")" = "$RELEASE_ID"
+          test "$(jq -r '.name' <<<"$release_json")" = 'v1.0.0'
+          test "$(jq -r '.tag_name' <<<"$release_json")" = 'v1.0.0'
+          test "$(jq -r '.draft' <<<"$release_json")" = false
+          test "$(jq -r '.prerelease' <<<"$release_json")" = false
+
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          release = json.loads(subprocess.check_output([
+              'gh', 'api', f"repos/{os.environ['REPO']}/releases/tags/v1.0.0"
+          ], text=True))
+          expected_body = Path('docs/releases/v1.0.0.md').read_text(encoding='utf-8').rstrip('\n')
+          assert release['body'].rstrip('\n') == expected_body
+          expected = {
+              os.environ['WHEEL_NAME'],
+              os.environ['WHEEL_NAME'] + '.sha256',
+              os.environ['SDIST_NAME'],
+              os.environ['SDIST_NAME'] + '.sha256',
+              'SHA256SUMS-v1.0.0.txt',
+          }
+          actual = {asset['name'] for asset in release['assets']}
+          assert actual == expected, (actual, expected)
+          assert 'PyPI' not in release['body']
+          print('RELEASE_TITLE_EXACT=PASS')
+          print('RELEASE_BODY_EXACT=PASS')
+          print('RELEASE_ASSET_SET=PASS')
+          print('PYPI_WORDING_ABSENT=PASS')
+          PY
+
+          tag_object="$(gh api "repos/$REPO/git/refs/tags/v1.0.0" --jq '.object.sha')"
+          test "$(gh api "repos/$REPO/git/refs/tags/v1.0.0" --jq '.object.type')" = tag
+          test "$(gh api "repos/$REPO/git/tags/$tag_object" --jq '.object.sha')" = "$EXPECTED_MAIN"
+          test "$(gh api "repos/$REPO/git/tags/$tag_object" --jq '.tagger.name')" = 'Đăng Khoa'
+          test "$(gh api "repos/$REPO/git/tags/$tag_object" --jq '.tagger.email')" = 'i.am@dangkhoa.dev'
+          test "$(gh api "repos/$REPO/git/refs/heads/main" --jq '.object.sha')" = "$EXPECTED_MAIN"
+
+          echo "FINAL_TAG_OBJECT=$tag_object"
+          echo "FINAL_MAIN=$EXPECTED_MAIN PASS"
+          echo "FINAL_RELEASE_ID=$RELEASE_ID PASS"
+          echo "PRELAUNCH_TAG_RELEASE_CORRECTIVE=PASS"
+
+      - name: Upload corrective evidence log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: prelaunch-tag-release-corrective-log
+          path: tag-release.log
+          if-no-files-found: warn
+          retention-days: 14
