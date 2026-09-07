@@ -1,0 +1,46 @@
+name: Prelaunch History Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prelaunch-history-reconstruction
+  cancel-in-progress: true
+
+jobs:
+  reconstruct:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'prelaunch-history-reconstruction-executor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout executor branch
+        uses: actions/checkout@v7
+        with:
+          ref: prelaunch-history-reconstruction-executor
+          fetch-depth: 0
+
+      - name: Configure authenticated origin
+        run: |
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Reconstruct and audit prelaunch history
+        shell: bash
+        run: |
+          set -o pipefail
+          python scripts/reconstruct_prelaunch_history.py | tee history-reconstruction.log
+
+      - name: Upload reconstruction log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: prelaunch-history-reconstruction-log
+          path: history-reconstruction.log
+          if-no-files-found: warn
+          retention-days: 7
