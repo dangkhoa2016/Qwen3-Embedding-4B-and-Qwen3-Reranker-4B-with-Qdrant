@@ -41,7 +41,9 @@ jobs:
 
       - name: Apply corrective documentation candidate
         if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
-        run: python tools/prelaunch_corrective/apply_docs.py
+        run: |
+          python tools/prelaunch_corrective/apply_docs.py
+          python tools/prelaunch_corrective/normalize_doc_language_switches.py
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -127,7 +129,9 @@ jobs:
 
       - name: Apply corrective documentation candidate
         if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
-        run: python tools/prelaunch_corrective/apply_docs.py
+        run: |
+          python tools/prelaunch_corrective/apply_docs.py
+          python tools/prelaunch_corrective/normalize_doc_language_switches.py
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -203,6 +207,7 @@ jobs:
         run: |
           python tools/prelaunch_corrective/apply_identity.py
           python tools/prelaunch_corrective/apply_docs.py
+          python tools/prelaunch_corrective/normalize_doc_language_switches.py
 
       - name: Persist candidate-only diff
         shell: bash
