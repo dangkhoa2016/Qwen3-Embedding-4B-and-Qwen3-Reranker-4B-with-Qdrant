@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          python scripts/reconstruct_prelaunch_history.py | tee history-reconstruction.log
+          python scripts/reconstruct_prelaunch_history_v2.py | tee history-reconstruction.log
 
       - name: Upload reconstruction log
         if: always()
