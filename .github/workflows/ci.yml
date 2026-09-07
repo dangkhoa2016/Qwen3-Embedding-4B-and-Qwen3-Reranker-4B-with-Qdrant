@@ -151,36 +151,7 @@ jobs:
           python -m build
 
       - name: Verify distribution metadata and contents
-        run: |
-          python - <<'PY'
-          from email.parser import Parser
-          from pathlib import Path
-          import tarfile
-          import zipfile
-          dist = Path("dist")
-          wheel = next(dist.glob("qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant-1.0.0-*.whl"))
-          sdist = dist / "qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant-1.0.0.tar.gz"
-          assert sdist.is_file(), sdist
-          with zipfile.ZipFile(wheel) as zf:
-              metadata_name = next(n for n in zf.namelist() if n.endswith(".dist-info/METADATA"))
-              metadata = Parser().parsestr(zf.read(metadata_name).decode("utf-8"))
-              assert metadata["Name"] == "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"
-              assert metadata["Version"] == "1.0.0"
-              assert metadata["License-Expression"] == "MIT"
-              assert any(n.endswith(".dist-info/licenses/LICENSE") for n in zf.namelist())
-          with tarfile.open(sdist, "r:gz") as tf:
-              names = set(tf.getnames())
-              prefix = "qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant-1.0.0/"
-              assert prefix + "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/__init__.py" in names
-              for path in [
-                  "README.md", "README.vi.md", "LICENSE",
-                  ".github/SECURITY.md", ".github/SECURITY.vi.md",
-                  ".github/CONTRIBUTING.md", ".github/CONTRIBUTING.vi.md",
-                  "docs/README.md", "docs/README.vi.md",
-                  "docs/releases/v1.0.0.md", "docs/releases/v1.0.0.vi.md",
-              ]:
-                  assert prefix + path in names, path
-          PY
+        run: python scripts/verify_distribution.py --dist-dir dist
 
       - name: Upload canonical tag distributions
         if: startsWith(github.ref, 'refs/tags/v')
