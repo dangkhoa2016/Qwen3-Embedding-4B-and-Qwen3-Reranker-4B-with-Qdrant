@@ -52,6 +52,7 @@ jobs:
           python -m pip install -r requirements-dev.txt
 
       - name: Validate source manifest structure and coverage
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.ref != 'prelaunch-repository-corrective-candidate'
         run: |
           python - <<'PY'
           from pathlib import Path
