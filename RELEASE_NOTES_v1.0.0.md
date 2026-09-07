@@ -2,7 +2,7 @@
 > 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](RELEASE_NOTES_v1.0.0.vi.md)
 
 **Project:** **Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant**  
-**Python distribution:** `qwen3-embedding-4b-reranker-4b-qdrant==1.0.0`  
+**Python distribution:** `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant==1.0.0`  
 **Git tag:** `v1.0.0`
 
 `1.0.0` is the first public release.
@@ -32,7 +32,7 @@ GitHub CI verifies Python 3.10 and 3.12, the blocking regression suite, canonica
 
 ## Packaging and deployment
 
-Python distribution: `qwen3-embedding-4b-reranker-4b-qdrant==1.0.0`. The wheel filename uses the normalized stem `qwen3_embedding_4b_reranker_4b_qdrant` as required by Python packaging conventions.
+Python distribution: `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant==1.0.0`. The wheel filename uses the normalized stem `qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant` as required by Python packaging conventions.
 
 Model weights, GGUF files, PyTorch, the hardened llama.cpp runtime, and the Qdrant snapshot are external inputs and are not bundled.
 

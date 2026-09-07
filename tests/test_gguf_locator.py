@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
 
-from qwen3_qdrant.gguf_locator import GGUFResolutionError, resolve_reranker_gguf
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.gguf_locator import GGUFResolutionError, resolve_reranker_gguf
 
 PREFERRED = "Qwen3-Reranker-4B.Q4_K_M.gguf"
 

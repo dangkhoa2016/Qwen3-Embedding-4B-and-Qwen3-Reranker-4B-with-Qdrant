@@ -117,14 +117,14 @@ def test_owned_process_predicates_are_fail_closed():
         })
 
         write_proc(proc, 101, cwd=app, args=[
-            "python", "-m", "uvicorn", "qwen3_qdrant.main:app",
+            "python", "-m", "uvicorn", "qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.main:app",
             "--port", "8000",
         ])
         assert ns["_is_owned_hybrid"](101)
         assert ns["_same_process_starttime"](101, 424242)
 
         write_proc(proc, 102, cwd=other, args=[
-            "python", "-m", "uvicorn", "qwen3_qdrant.main:app",
+            "python", "-m", "uvicorn", "qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.main:app",
             "--port", "8000",
         ])
         assert not ns["_is_owned_hybrid"](102)

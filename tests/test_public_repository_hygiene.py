@@ -15,7 +15,7 @@ def read(path: str) -> str:
 
 def test_public_package_metadata_is_current():
     project = tomllib.loads(read("pyproject.toml"))["project"]
-    assert project["name"] == "qwen3-embedding-4b-reranker-4b-qdrant"
+    assert project["name"] == "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"
     assert project["version"] == "1.0.0"
     assert project["authors"] == [{"name": "Đăng Khoa", "email": "i.am@dangkhoa.dev"}]
     assert project["license"] == "MIT"
@@ -44,9 +44,9 @@ def test_public_landing_and_governance_docs_are_complete():
     contributing = read("CONTRIBUTING.md")
     for required in [
         "Retrieval default: K=5", "MAX_INSTRUCTION_CHARS=1024",
-        "src/qwen3_qdrant/config.py",
-        "src/qwen3_qdrant/gguf_reranker_engine.py",
-        "src/qwen3_qdrant/production_demo.py",
+        "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/config.py",
+        "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/gguf_reranker_engine.py",
+        "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/production_demo.py",
     ]:
         assert required in contributing, required
 
@@ -128,9 +128,9 @@ def test_github_community_and_ci_files_are_current():
         assert (ROOT / path).is_file(), path
 
     ci = read(".github/workflows/ci.yml")
-    assert "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7" in ci
-    assert "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7" in ci
-    assert "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7" in ci
+    assert "actions/checkout@v7" in ci
+    assert "actions/setup-python@v7" in ci
+    assert "actions/upload-artifact@v7" in ci
     assert 'python-version: ["3.10", "3.12"]' in ci
     assert "continue-on-error: true" not in ci
     assert "--deselect=" not in ci

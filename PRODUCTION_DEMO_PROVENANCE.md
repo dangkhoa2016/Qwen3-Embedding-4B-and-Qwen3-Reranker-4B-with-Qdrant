@@ -6,13 +6,13 @@ This document records public runtime, data, and artifact identities for the `1.0
 ## Release identity
 
 ```text
-Package=qwen3-embedding-4b-reranker-4b-qdrant
+Package=qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant
 Version=1.0.0
 Author=Đăng Khoa <i.am@dangkhoa.dev>
 License=MIT
 ```
 
-The internal Python package namespace remains `qwen3_qdrant`.
+The internal Python package namespace remains `qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant`.
 
 ## Model and Kaggle input identities
 

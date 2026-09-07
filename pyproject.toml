@@ -3,7 +3,7 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "qwen3-embedding-4b-reranker-4b-qdrant"
+name = "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"
 version = "1.0.0"
 description = "Production-oriented Qwen3-Embedding-4B and Qwen3-Reranker-4B stack for Qdrant, qualified for CPU inference with a reproducible 20K-point search demo"
 readme = "README.md"

@@ -4,10 +4,10 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from qwen3_qdrant.config import Settings
-from qwen3_qdrant.gate import InferenceGate
-from qwen3_qdrant.memory import bytes_to_gib, parse_memory_events
-from qwen3_qdrant.process_lock import ProcessSingletonLock, ProcessSingletonLockError
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.config import Settings
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.gate import InferenceGate
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.memory import bytes_to_gib, parse_memory_events
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.process_lock import ProcessSingletonLock, ProcessSingletonLockError
 
 
 def test_settings_have_cpu_safe_defaults(monkeypatch):
@@ -21,8 +21,8 @@ def test_settings_have_cpu_safe_defaults(monkeypatch):
     assert s.second_model_min_available_gib == 10
     assert s.final_min_available_gib == 4
     assert s.allow_remote_model_download is False
-    assert s.service_name == "qwen3-embedding-4b-reranker-4b-qdrant"
-    assert s.runtime_lock_path == Path("/tmp/qwen3-embedding-4b-reranker-4b-qdrant.lock")
+    assert s.service_name == "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"
+    assert s.runtime_lock_path == Path("/tmp/qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant.lock")
 
 
 def test_settings_reject_unsupported_dtype(monkeypatch):

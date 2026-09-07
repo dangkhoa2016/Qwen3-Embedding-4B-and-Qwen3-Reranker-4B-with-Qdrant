@@ -26,7 +26,7 @@ PYTHONPATH="$ROOT/src" python - <<'PY'
 import torch, transformers, torchao
 from transformers import TorchAoConfig
 from torchao.quantization import Int8DynamicActivationInt8WeightConfig, Int8WeightOnlyConfig
-from qwen3_qdrant.quantization import build_torchao_quantization_config
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.quantization import build_torchao_quantization_config
 print("torch", torch.__version__)
 print("transformers", transformers.__version__)
 print("torchao", torchao.__version__)

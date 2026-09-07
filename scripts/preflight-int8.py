@@ -8,9 +8,9 @@ import torch
 import torchao
 import transformers
 
-from qwen3_qdrant.config import Settings
-from qwen3_qdrant.model_locator import resolve_model_path
-from qwen3_qdrant.quantization import build_torchao_quantization_config
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.config import Settings
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.model_locator import resolve_model_path
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.quantization import build_torchao_quantization_config
 
 os.environ.setdefault("DUAL_API_KEY", "preflight-only-not-a-live-secret")
 os.environ.setdefault("LOAD_MODELS_ON_STARTUP", "0")

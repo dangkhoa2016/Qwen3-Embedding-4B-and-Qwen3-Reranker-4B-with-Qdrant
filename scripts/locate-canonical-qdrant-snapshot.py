@@ -5,7 +5,7 @@ import json
 import os
 from pathlib import Path
 
-from qwen3_qdrant.production_demo import locate_snapshot
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.production_demo import locate_snapshot
 
 FILENAME = "knowledge_entities_qwen3_4b_text_v21-20260827T013824Z.snapshot"
 SIZE = 283812352

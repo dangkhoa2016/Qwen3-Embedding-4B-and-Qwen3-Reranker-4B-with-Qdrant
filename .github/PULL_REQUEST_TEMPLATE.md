@@ -21,9 +21,9 @@ Describe what this change does and why it is needed.
 Qualification-sensitive files:
 
 ```text
-src/qwen3_qdrant/config.py
-src/qwen3_qdrant/gguf_reranker_engine.py
-src/qwen3_qdrant/production_demo.py
+src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/config.py
+src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/gguf_reranker_engine.py
+src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/production_demo.py
 tests/test_gguf_reranker_engine.py
 tests/test_production_demo.py
 ```

@@ -1,7 +1,7 @@
 # Production qualification
 > 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](PRODUCTION_QUALIFICATION.vi.md)
 
-This document records the public production-demo qualification reference for `qwen3-embedding-4b-reranker-4b-qdrant` `1.0.0`.
+This document records the public production-demo qualification reference for `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant` `1.0.0`.
 
 ## Qualification result
 

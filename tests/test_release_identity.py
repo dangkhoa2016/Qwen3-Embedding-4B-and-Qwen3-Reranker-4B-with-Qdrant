@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_pyproject_first_public_release_identity():
     data = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     project = data["project"]
-    assert project["name"] == "qwen3-embedding-4b-reranker-4b-qdrant"
+    assert project["name"] == "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"
     assert project["version"] == "1.0.0"
     assert project["authors"] == [{"name": "Đăng Khoa", "email": "i.am@dangkhoa.dev"}]
     assert project["license"] == "MIT"
@@ -20,9 +20,9 @@ def test_pyproject_first_public_release_identity():
 
 def test_runtime_version_and_public_identity_are_1_0_0():
     namespace = {}
-    exec((ROOT / "src/qwen3_qdrant/__init__.py").read_text(encoding="utf-8"), namespace)
+    exec((ROOT / "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/__init__.py").read_text(encoding="utf-8"), namespace)
     assert namespace["__version__"] == "1.0.0"
-    assert namespace["__project_name__"] == "qwen3-embedding-4b-reranker-4b-qdrant"
+    assert namespace["__project_name__"] == "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
     assert namespace["__display_name__"] == "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
 
 
@@ -43,7 +43,7 @@ def test_public_repository_identity_matches_new_repository():
         "Issues": expected_url + "/issues",
     }
     namespace = {}
-    exec((ROOT / "src/qwen3_qdrant/__init__.py").read_text(encoding="utf-8"), namespace)
+    exec((ROOT / "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/__init__.py").read_text(encoding="utf-8"), namespace)
     assert namespace["__display_name__"] == expected_display
     assert expected_url in (ROOT / "SECURITY.md").read_text(encoding="utf-8")
     assert expected_url in (ROOT / "SECURITY.vi.md").read_text(encoding="utf-8")

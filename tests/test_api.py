@@ -3,9 +3,9 @@ from contextlib import asynccontextmanager
 import torch
 from fastapi.testclient import TestClient
 
-from qwen3_qdrant.api import create_app
-from qwen3_qdrant.config import Settings
-from qwen3_qdrant.gate import QueueFullError
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.api import create_app
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.config import Settings
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.gate import QueueFullError
 
 
 class FakeRuntime:
@@ -108,4 +108,4 @@ def test_public_api_identity_uses_new_project_name(monkeypatch):
     assert app.title == "Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant"
     with TestClient(app) as client:
         body = client.get("/health").json()
-        assert body["service"] == "qwen3-embedding-4b-reranker-4b-qdrant"
+        assert body["service"] == "qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant"

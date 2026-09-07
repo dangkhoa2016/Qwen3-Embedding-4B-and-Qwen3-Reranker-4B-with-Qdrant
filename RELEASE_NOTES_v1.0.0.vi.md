@@ -2,7 +2,7 @@
 > 🌐 Language / Ngôn ngữ: [English](RELEASE_NOTES_v1.0.0.md) | **Tiếng Việt**
 
 **Dự án:** **Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant**  
-**Python distribution:** `qwen3-embedding-4b-reranker-4b-qdrant==1.0.0`  
+**Python distribution:** `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant==1.0.0`  
 **Git tag:** `v1.0.0`
 
 `1.0.0` là public release đầu tiên.
@@ -32,7 +32,7 @@ GitHub CI verify Python 3.10 và 3.12, blocking regression suite, canonical mode
 
 ## Packaging và deployment
 
-Python distribution: `qwen3-embedding-4b-reranker-4b-qdrant==1.0.0`. Tên wheel dùng normalized stem `qwen3_embedding_4b_reranker_4b_qdrant` theo quy ước Python packaging.
+Python distribution: `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant==1.0.0`. Tên wheel dùng normalized stem `qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant` theo quy ước Python packaging.
 
 Model weights, GGUF files, PyTorch, hardened llama.cpp runtime và Qdrant snapshot là external inputs, không bundle.
 

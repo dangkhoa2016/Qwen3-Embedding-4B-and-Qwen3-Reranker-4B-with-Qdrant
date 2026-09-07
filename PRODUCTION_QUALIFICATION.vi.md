@@ -1,7 +1,7 @@
 # Kiểm chứng production
 > 🌐 Language / Ngôn ngữ: [English](PRODUCTION_QUALIFICATION.md) | **Tiếng Việt**
 
-Tài liệu này ghi public production-demo qualification reference cho `qwen3-embedding-4b-reranker-4b-qdrant` `1.0.0`.
+Tài liệu này ghi public production-demo qualification reference cho `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant` `1.0.0`.
 
 ## Kết quả qualification
 

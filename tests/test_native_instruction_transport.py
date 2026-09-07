@@ -8,9 +8,9 @@ from types import SimpleNamespace
 import pytest
 from fastapi.testclient import TestClient
 
-from qwen3_qdrant.api import create_app
-from qwen3_qdrant.config import Settings
-from qwen3_qdrant.gguf_reranker_engine import GGUFRerankerEngine
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.api import create_app
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.config import Settings
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.gguf_reranker_engine import GGUFRerankerEngine
 
 
 # ---------------------------------------------------------------------------

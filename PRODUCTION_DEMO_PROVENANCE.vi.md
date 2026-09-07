@@ -6,13 +6,13 @@ Tài liệu này ghi public runtime, data và artifact identities cho production
 ## Release identity
 
 ```text
-Package=qwen3-embedding-4b-reranker-4b-qdrant
+Package=qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant
 Version=1.0.0
 Author=Đăng Khoa <i.am@dangkhoa.dev>
 License=MIT
 ```
 
-Internal Python package namespace vẫn là `qwen3_qdrant`.
+Internal Python package namespace vẫn là `qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant`.
 
 ## Model và Kaggle input identities
 

@@ -1,4 +1,4 @@
-from qwen3_qdrant.int8_benchmark import BASELINE_FP16, classify_candidate, compute_speedups
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.int8_benchmark import BASELINE_FP16, classify_candidate, compute_speedups
 
 
 def test_frozen_baseline_matches_phase_e_evidence():
@@ -25,7 +25,7 @@ def test_candidate_promotes_only_with_quality_and_at_least_1_5x_k2():
 
 
 def test_candidate_requires_25_percent_peak_rss_reduction_for_promotion():
-    from qwen3_qdrant.int8_benchmark import BASELINE_FP16
+    from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.int8_benchmark import BASELINE_FP16
     baseline = BASELINE_FP16["peak_rss_gib"]
     assert classify_candidate(
         quality_pass=True, k2_speedup_x=2.0, oom_delta=0, oom_kill_delta=0,

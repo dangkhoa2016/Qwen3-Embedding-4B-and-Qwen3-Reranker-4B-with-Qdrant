@@ -1,10 +1,10 @@
 from fastapi import Request
 import torch
 
-from qwen3_qdrant.api import create_app
-from qwen3_qdrant.config import Settings
-from qwen3_qdrant.runtime import DualModelRuntime
-from qwen3_qdrant.security import verify_bearer
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.api import create_app
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.config import Settings
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.runtime import DualModelRuntime
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.security import verify_bearer
 
 settings = Settings()
 runtime = DualModelRuntime(settings)

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from qwen3_qdrant.llama_server import LlamaServerProcess, build_llama_server_argv
+from qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant.llama_server import LlamaServerProcess, build_llama_server_argv
 
 
 def test_build_argv_is_cpu_reranker_loopback(tmp_path: Path):
