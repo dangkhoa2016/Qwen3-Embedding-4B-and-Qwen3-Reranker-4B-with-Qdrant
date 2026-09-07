@@ -1,5 +1,5 @@
 # Kaggle production-demo execution guide
-> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](guide-production-demo.vi.md)
+> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](guide.vi.md)
 
 1. Attach `dangkhoa2016/qwen-qwen3-embedding-4b` → Transformers / `default` / Version `1`.
 2. Attach `dangkhoa2016/giladgd-qwen3-reranker-4b-gguf` containing `Qwen3-Reranker-4B.Q4_K_M.gguf`.
@@ -23,7 +23,7 @@ TORCH_NUM_THREADS=2
 
 The publication-ready qualification reference passed 3/3 semantic cases, recorded zero cgroup OOM/OOM-kill events, completed the qualified pipeline in `468.489s`, and completed the notebook in `469.782s` within the `600s` threshold.
 
-See `PRODUCTION_QUALIFICATION.md` and `PRODUCTION_DEMO_PROVENANCE.md`.
+See `qualification.md` and `provenance.md`.
 
 ## Safe repeated Run All
 

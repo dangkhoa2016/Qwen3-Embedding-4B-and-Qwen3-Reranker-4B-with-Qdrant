@@ -1,5 +1,6 @@
 include README.vi.md
-include SECURITY.md
-include SECURITY.vi.md
-include CONTRIBUTING.md
-include CONTRIBUTING.vi.md
+include .github/SECURITY.md
+include .github/SECURITY.vi.md
+include .github/CONTRIBUTING.md
+include .github/CONTRIBUTING.vi.md
+recursive-include docs *.md

@@ -1,5 +1,5 @@
 # Hướng dẫn chạy Kaggle production demo
-> 🌐 Language / Ngôn ngữ: [English](guide-production-demo.md) | **Tiếng Việt**
+> 🌐 Language / Ngôn ngữ: [English](guide.md) | **Tiếng Việt**
 
 1. Attach `dangkhoa2016/qwen-qwen3-embedding-4b` → Transformers / `default` / Version `1`.
 2. Attach `dangkhoa2016/giladgd-qwen3-reranker-4b-gguf` chứa `Qwen3-Reranker-4B.Q4_K_M.gguf`.
@@ -23,7 +23,7 @@ TORCH_NUM_THREADS=2
 
 Publication-ready qualification reference pass 3/3 semantic cases, zero cgroup OOM/OOM-kill, qualified pipeline `468.489s`, notebook total `469.782s`, trong threshold `600s`.
 
-Xem `PRODUCTION_QUALIFICATION.vi.md` và `PRODUCTION_DEMO_PROVENANCE.vi.md`.
+Xem `qualification.vi.md` và `provenance.vi.md`.
 
 ## Run All lặp lại an toàn
 

@@ -1,9 +1,9 @@
-# Production qualification
-> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](PRODUCTION_QUALIFICATION.vi.md)
+# Kiểm chứng production
+> 🌐 Language / Ngôn ngữ: [English](qualification.md) | **Tiếng Việt**
 
-This document records the public production-demo qualification reference for `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant` `1.0.0`.
+Tài liệu này ghi public production-demo qualification reference cho `qwen3-embedding-4b-and-qwen3-reranker-4b-with-qdrant` `1.0.0`.
 
-## Qualification result
+## Kết quả qualification
 
 ```text
 Production qualification: PASS
@@ -19,7 +19,7 @@ Verified Run All: 469.782s
 Same-session rerun safety: PASS
 ```
 
-The timing applies only to the qualified Kaggle CPU environment.
+Timing chỉ áp dụng cho qualified Kaggle CPU environment.
 
 ## Semantic validation
 
@@ -27,7 +27,7 @@ The timing applies only to the qualified Kaggle CPU environment.
 2. `Thủ đô của Nhật Bản là thành phố nào?` → `Tokyo`.
 3. `Which country has thủ đô Bangkok and uses đồng baht?` → `Thailand`.
 
-## Runtime and data identities
+## Runtime và data identities
 
 ```text
 Qdrant version=1.18.3
@@ -42,7 +42,7 @@ llama launcher SHA256=28a79707376877f09065fa05fda5a9a6f57dfb4aed01c9918123667e38
 llama implementation SHA256=c4807f2f10cdf354270ac97c1f091d0846e8154749b4b8347f5f26a40184d425
 ```
 
-The executing llama.cpp launcher was verified from `/proc/<pid>/exe`; the loaded `libllama-server-impl.so` was verified from `/proc/<pid>/maps`.
+Executing llama.cpp launcher được verify từ `/proc/<pid>/exe`; loaded `libllama-server-impl.so` được verify từ `/proc/<pid>/maps`.
 
 ## External Kaggle inputs
 
@@ -53,4 +53,4 @@ Qdrant snapshot=dangkhoa2016/qdrant-bilingual-search-canonical-v2-1-20k
 Qwen3-Reranker-4B hardened runtime=dangkhoa2016/qwen3-reranker-4b-hardened-llama-cpp-runtime
 ```
 
-Changes that alter qualified behavior require fresh qualification evidence.
+Thay đổi qualified behavior cần fresh qualification evidence.

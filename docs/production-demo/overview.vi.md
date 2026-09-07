@@ -1,5 +1,5 @@
-# Qwen3-Embedding-4B / Qwen3-Reranker-4B and Qdrant Stack - v1.0.0
-> 🌐 Language / Ngôn ngữ: [English](README_PRODUCTION_DEMO.md) | **Tiếng Việt**
+# Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant - Production Demo
+> 🌐 Language / Ngôn ngữ: [English](overview.md) | **Tiếng Việt**
 
 Production demo chạy qualified retrieval path:
 
@@ -63,7 +63,7 @@ Mở `notebooks/qwen3_embedding_reranker_qdrant_kaggle_demo.ipynb`, attach đủ
 - Qdrant collection: `knowledge_entities_qwen3_4b_text_v21`
 - Retrieval default: `K=5`
 
-Xem `PRODUCTION_QUALIFICATION.vi.md` và `PRODUCTION_DEMO_PROVENANCE.vi.md`.
+Xem [Kiểm chứng production](qualification.vi.md) và [Nguồn gốc](provenance.vi.md).
 
 ## Run All lặp lại an toàn
 

@@ -45,8 +45,8 @@ def test_public_repository_identity_matches_new_repository():
     namespace = {}
     exec((ROOT / "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/__init__.py").read_text(encoding="utf-8"), namespace)
     assert namespace["__display_name__"] == expected_display
-    assert expected_url in (ROOT / "SECURITY.md").read_text(encoding="utf-8")
-    assert expected_url in (ROOT / "SECURITY.vi.md").read_text(encoding="utf-8")
+    assert expected_url in (ROOT / ".github" / "SECURITY.md").read_text(encoding="utf-8")
+    assert expected_url in (ROOT / ".github" / "SECURITY.vi.md").read_text(encoding="utf-8")
 
 
 def test_retired_repository_slug_is_absent_from_public_tree():

@@ -1,7 +1,7 @@
-# Provenance của production demo
-> 🌐 Language / Ngôn ngữ: [English](PRODUCTION_DEMO_PROVENANCE.md) | **Tiếng Việt**
+# Production-demo provenance
+> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](provenance.vi.md)
 
-Tài liệu này ghi public runtime, data và artifact identities cho production demo `1.0.0`.
+This document records public runtime, data, and artifact identities for the `1.0.0` production demo.
 
 ## Release identity
 
@@ -12,9 +12,9 @@ Author=Đăng Khoa <i.am@dangkhoa.dev>
 License=MIT
 ```
 
-Internal Python package namespace vẫn là `qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant`.
+The internal Python package namespace remains `qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant`.
 
-## Model và Kaggle input identities
+## Model and Kaggle input identities
 
 ```text
 Embedding model=Qwen3-Embedding-4B
@@ -49,10 +49,10 @@ snapshot SHA256=71f12fe14ef51966069347290ad15302d389e488d7904dab6cf0cf190f43064f
 ## Qualified behavior
 
 - Retrieval default: `K=5`.
-- Semantic validation: 3/3 pass.
-- cgroup OOM và OOM-kill: zero.
+- Semantic validation: 3/3 passed.
+- cgroup OOM and OOM-kill events: zero.
 - Qualified pipeline: `468.489s`.
-- End-to-end Run All: `469.782s` trong threshold `600s`.
-- Same-session repeated Run All: đã verify PASS bằng owned-process cleanup; process chưa được xác minh không bao giờ bị terminate tự động.
+- End-to-end Run All: `469.782s` within the `600s` threshold.
+- Same-session repeated Run All: verified PASS using owned-process cleanup; unverified processes are never terminated automatically.
 
-Xem `PRODUCTION_QUALIFICATION.vi.md`.
+See `qualification.md`.
