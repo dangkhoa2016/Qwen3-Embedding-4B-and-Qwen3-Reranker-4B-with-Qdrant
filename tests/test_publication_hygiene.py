@@ -16,10 +16,10 @@ def test_instruction_capacity_is_1024():
 def test_public_docs_record_verified_k5_default_without_internal_labels():
     for name in (
         "README.md",
-        "README_PRODUCTION_DEMO.md",
-        "README_PRODUCTION_DEMO.vi.md",
-        "guide-production-demo.md",
-        "PRODUCTION_QUALIFICATION.md",
+        "docs/production-demo/overview.md",
+        "docs/production-demo/overview.vi.md",
+        "docs/production-demo/guide.md",
+        "docs/production-demo/qualification.md",
     ):
         text = read(name)
         assert "K=5" in text, name
@@ -28,7 +28,7 @@ def test_public_docs_record_verified_k5_default_without_internal_labels():
 
 
 def test_public_production_qualification_record_is_present():
-    text = read("PRODUCTION_QUALIFICATION.md")
+    text = read("docs/production-demo/qualification.md")
     assert "Production qualification: PASS" in text
     assert "Retrieval default: K=5" in text
     assert "Semantic validation: 3/3 PASS" in text
@@ -45,33 +45,21 @@ def test_no_egg_info_residue_in_source_tree():
     assert not list((ROOT / "src").glob("*.egg-info"))
 
 
-def test_release_notes_are_publication_state_neutral_and_bilingual():
-    release_en = read("RELEASE_NOTES_v1.0.0.md")
-    release_vi = read("RELEASE_NOTES_v1.0.0.vi.md")
+def test_release_notes_are_github_release_focused_and_bilingual():
+    release_en = read("docs/releases/v1.0.0.md")
+    release_vi = read("docs/releases/v1.0.0.vi.md")
+    h1 = "# Qwen3-Embedding-4B and Qwen3-Reranker-4B with Qdrant - v1.0.0"
 
-    for required in [
-        "## Publication channels",
-        "Release identity: v1.0.0",
-        "GitHub Release: tagged release channel for canonical release assets",
-        "Package index / PyPI: separate publication channel",
-        "Publication through one channel does not imply publication through another; each channel is verified independently.",
-    ]:
-        assert required in release_en, required
+    assert release_en.startswith(h1 + "\n")
+    assert release_vi.startswith(h1 + "\n")
+    assert "## Production qualification" in release_en
+    assert "## Verification" in release_en
+    assert "## Kiểm chứng production" in release_vi
+    assert "## Xác minh" in release_vi
 
-    for required in [
-        "## Kênh phát hành",
-        "Release identity: v1.0.0",
-        "GitHub Release: kênh release theo tag cho canonical release assets",
-        "Package index / PyPI: kênh publication riêng",
-        "Publication qua một kênh không đồng nghĩa đã publication qua kênh khác; từng kênh được kiểm chứng độc lập.",
-    ]:
-        assert required in release_vi, required
-
-    for stale in [
-        "TAG=NONE",
-        "RELEASE=NONE",
-        "first-release tag and GitHub Release pending",
-        "no `v1.0.0` tag or GitHub Release has been created yet",
-    ]:
-        assert stale not in release_en
-        assert stale not in release_vi
+    for text in (release_en, release_vi):
+        assert "PyPI" not in text
+        assert "TAG=NONE" not in text
+        assert "RELEASE=NONE" not in text
+        assert "first-release tag and GitHub Release pending" not in text
+        assert "no `v1.0.0` tag or GitHub Release has been created yet" not in text
