@@ -39,6 +39,10 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
         run: python tools/prelaunch_corrective/apply_identity.py
 
+      - name: Apply corrective documentation candidate
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
+        run: python tools/prelaunch_corrective/apply_docs.py
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -121,6 +125,10 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
         run: python tools/prelaunch_corrective/apply_identity.py
 
+      - name: Apply corrective documentation candidate
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'prelaunch-repository-corrective-candidate'
+        run: python tools/prelaunch_corrective/apply_docs.py
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -160,7 +168,13 @@ jobs:
               names = set(tf.getnames())
               prefix = "qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant-1.0.0/"
               assert prefix + "src/qwen3_embedding_4b_and_qwen3_reranker_4b_with_qdrant/__init__.py" in names
-              for path in ["README.md", "README.vi.md", "SECURITY.md", "SECURITY.vi.md", "CONTRIBUTING.md", "CONTRIBUTING.vi.md", "LICENSE"]:
+              for path in [
+                  "README.md", "README.vi.md", "LICENSE",
+                  ".github/SECURITY.md", ".github/SECURITY.vi.md",
+                  ".github/CONTRIBUTING.md", ".github/CONTRIBUTING.vi.md",
+                  "docs/README.md", "docs/README.vi.md",
+                  "docs/releases/v1.0.0.md", "docs/releases/v1.0.0.vi.md",
+              ]:
                   assert prefix + path in names, path
           PY
 
@@ -185,8 +199,10 @@ jobs:
           ref: prelaunch-repository-corrective-candidate
           fetch-depth: 0
 
-      - name: Apply verified identity migration
-        run: python tools/prelaunch_corrective/apply_identity.py
+      - name: Apply verified candidate transforms
+        run: |
+          python tools/prelaunch_corrective/apply_identity.py
+          python tools/prelaunch_corrective/apply_docs.py
 
       - name: Persist candidate-only diff
         shell: bash
@@ -198,6 +214,6 @@ jobs:
           git add -A
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(corrective): persist verified identity migration"
+          git commit -m "chore(corrective): persist verified documentation topology"
           git push origin HEAD:prelaunch-repository-corrective-candidate
           echo "CANDIDATE_PERSIST=PASS"
