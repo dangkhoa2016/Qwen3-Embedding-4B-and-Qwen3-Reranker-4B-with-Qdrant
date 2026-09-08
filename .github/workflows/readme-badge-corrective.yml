@@ -1,0 +1,104 @@
+name: README Badge Corrective Executor
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'readme-badge-corrective-executor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TARGET_BRANCH: docs/readme-badges-and-public-metadata
+      EXPECTED_BASE: a0e772f4c67c6a1552e29f76dfc59bf7efc6a2cd
+
+    steps:
+      - name: Checkout target docs branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+
+      - name: Verify RED precondition and apply synchronized badges
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_BASE"
+
+          python - <<'PY'
+          from pathlib import Path
+
+          repo = 'dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant'
+          old = f'[![CI](https://github.com/{repo}/actions/workflows/ci.yml/badge.svg)](https://github.com/{repo}/actions/workflows/ci.yml)'
+          block = '\n'.join([
+              old,
+              f'[![Release](https://img.shields.io/github/v/release/{repo}?label=release)](https://github.com/{repo}/releases/tag/v1.0.0)',
+              '![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.12-3776AB?logo=python&logoColor=white)',
+              '![Qdrant](https://img.shields.io/badge/Qdrant-1.18.3-DC244C?logo=qdrant&logoColor=white)',
+              '![Production Demo](https://img.shields.io/badge/Kaggle%20CPU-Qualified-20BEFF?logo=kaggle&logoColor=white)',
+              '[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)',
+              '![Docs](https://img.shields.io/badge/Docs-English%20%7C%20Ti%E1%BA%BFng%20Vi%E1%BB%87t-informational)',
+          ])
+
+          for name in ('README.md', 'README.vi.md'):
+              path = Path(name)
+              text = path.read_text(encoding='utf-8')
+              # RED precondition: the missing feature is exactly one CI badge and no public badge set.
+              assert text.count('img.shields.io') == 0, f'{name}: public badge set already present'
+              assert text.count('[![CI]') == 1, f'{name}: expected exactly one CI badge'
+              assert old in text, f'{name}: CI badge source changed unexpectedly'
+              path.write_text(text.replace(old, block, 1), encoding='utf-8')
+
+          en = Path('README.md').read_text(encoding='utf-8')
+          vi = Path('README.vi.md').read_text(encoding='utf-8')
+          required = (
+              '[![CI]', '[![Release]', '![Python]', '![Qdrant]',
+              '![Production Demo]', '[![License: MIT]', '![Docs]'
+          )
+          for token in required:
+              assert token in en and token in vi, token
+          print('README_BADGE_RED_PRECONDITION=PASS')
+          print('README_BADGE_PARITY=PASS')
+          PY
+
+      - name: Regenerate deterministic source manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp)"
+          while IFS= read -r path; do
+            [ "$path" = "MANIFEST.sha256" ] && continue
+            sha256sum "$path" >> "$tmp"
+          done < <(git ls-files | LC_ALL=C sort)
+          mv "$tmp" MANIFEST.sha256
+          sha256sum -c MANIFEST.sha256 >/dev/null
+
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          tracked = set(subprocess.check_output(['git','ls-files'], text=True).splitlines()) - {'MANIFEST.sha256'}
+          listed = {line.split('  ',1)[1] for line in Path('MANIFEST.sha256').read_text().splitlines() if line}
+          assert listed == tracked, (tracked-listed, listed-tracked)
+          print(f'MANIFEST_COVERAGE={len(listed)}/{len(tracked)} PASS')
+          PY
+
+      - name: Commit and push docs corrective
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Đăng Khoa'
+          git config user.email 'i.am@dangkhoa.dev'
+          git add README.md README.vi.md MANIFEST.sha256
+          git diff --cached --check
+          git diff --cached --quiet && { echo 'No corrective diff produced'; exit 1; }
+          git commit -m 'docs(readme): add synchronized public repository badges' \
+            -m '- Add CI, release, Python, Qdrant, qualified Kaggle CPU, MIT license, and bilingual documentation badges to both root README files.' \
+            -m '- Keep English and Vietnamese badge sets byte-for-byte aligned while preserving the existing language switch and technical content.' \
+            -m '- Regenerate MANIFEST.sha256 so source-integrity verification covers the public-facing README update.'
+          git push origin HEAD:"$TARGET_BRANCH"
+          echo "TARGET_HEAD=$(git rev-parse HEAD)"
+          echo 'README_BADGE_CORRECTIVE_PUSH=PASS'
