@@ -1,0 +1,107 @@
+name: Release v1.0.0 Link Corrective
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  correct-release-links:
+    if: github.event.pull_request.head.ref == 'prelaunch-release-link-corrective-executor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant
+      RELEASE_ID: '384014172'
+      EXPECTED_TAG: v1.0.0
+      EXPECTED_TARGET: a0e772f4c67c6a1552e29f76dfc59bf7efc6a2cd
+      EXPECTED_TITLE: v1.0.0
+      EXPECTED_ASSET_COUNT: '5'
+
+    steps:
+      - name: Reproduce broken release links (RED)
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/releases/$RELEASE_ID" > release-before.json
+          jq -e --arg tag "$EXPECTED_TAG" '.tag_name == $tag' release-before.json >/dev/null
+          jq -e --arg title "$EXPECTED_TITLE" '.name == $title' release-before.json >/dev/null
+          jq -e --arg target "$EXPECTED_TARGET" '.target_commitish == $target' release-before.json >/dev/null
+          test "$(jq '.assets | length' release-before.json)" = "$EXPECTED_ASSET_COUNT"
+
+          body="$(jq -r '.body' release-before.json)"
+          grep -Fq '[Tiếng Việt](v1.0.0.vi.md)' <<<"$body"
+          grep -Fq '[Production qualification](../production-demo/qualification.md)' <<<"$body"
+          grep -Fq '[Provenance](../production-demo/provenance.md)' <<<"$body"
+          echo 'RED_BROKEN_RELATIVE_LINKS_REPRODUCED=PASS'
+
+      - name: Replace only broken relative links
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          repo = 'dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant'
+          tag = 'v1.0.0'
+          data = json.loads(Path('release-before.json').read_text())
+          body = data['body']
+
+          replacements = {
+              '[Tiếng Việt](v1.0.0.vi.md)':
+                  f'[Tiếng Việt](https://github.com/{repo}/blob/{tag}/docs/releases/v1.0.0.vi.md)',
+              '[Production qualification](../production-demo/qualification.md)':
+                  f'[Production qualification](https://github.com/{repo}/blob/{tag}/docs/production-demo/qualification.md)',
+              '[Provenance](../production-demo/provenance.md)':
+                  f'[Provenance](https://github.com/{repo}/blob/{tag}/docs/production-demo/provenance.md)',
+          }
+
+          for old, new in replacements.items():
+              count = body.count(old)
+              assert count == 1, (old, count)
+              body = body.replace(old, new)
+
+          for old in replacements:
+              assert old not in body
+          for new in replacements.values():
+              assert new in body
+
+          Path('release-after.md').write_text(body, encoding='utf-8')
+          PY
+
+          jq -n --rawfile body release-after.md '{body:$body}' > release-patch.json
+          gh api -X PATCH "repos/$REPO/releases/$RELEASE_ID" --input release-patch.json >/dev/null
+          echo 'RELEASE_BODY_PATCH=PASS'
+
+      - name: Verify corrected live release (GREEN)
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$REPO/releases/$RELEASE_ID" > release-after.json
+
+          jq -e --arg tag "$EXPECTED_TAG" '.tag_name == $tag' release-after.json >/dev/null
+          jq -e --arg title "$EXPECTED_TITLE" '.name == $title' release-after.json >/dev/null
+          jq -e --arg target "$EXPECTED_TARGET" '.target_commitish == $target' release-after.json >/dev/null
+          jq -e '.draft == false and .prerelease == false and .immutable == false' release-after.json >/dev/null
+          test "$(jq '.assets | length' release-after.json)" = "$EXPECTED_ASSET_COUNT"
+
+          before_assets="$(jq -S '[.assets[] | {name,digest,size}] | sort_by(.name)' release-before.json)"
+          after_assets="$(jq -S '[.assets[] | {name,digest,size}] | sort_by(.name)' release-after.json)"
+          test "$before_assets" = "$after_assets"
+
+          body="$(jq -r '.body' release-after.json)"
+          ! grep -Fq '[Tiếng Việt](v1.0.0.vi.md)' <<<"$body"
+          ! grep -Fq '[Production qualification](../production-demo/qualification.md)' <<<"$body"
+          ! grep -Fq '[Provenance](../production-demo/provenance.md)' <<<"$body"
+
+          grep -Fq "[Tiếng Việt](https://github.com/$REPO/blob/v1.0.0/docs/releases/v1.0.0.vi.md)" <<<"$body"
+          grep -Fq "[Production qualification](https://github.com/$REPO/blob/v1.0.0/docs/production-demo/qualification.md)" <<<"$body"
+          grep -Fq "[Provenance](https://github.com/$REPO/blob/v1.0.0/docs/production-demo/provenance.md)" <<<"$body"
+
+          echo 'RELEASE_LINKS_GREEN=PASS'
+          echo 'RELEASE_IDENTITY_UNCHANGED=PASS'
+          echo 'RELEASE_ASSETS_UNCHANGED=PASS'
