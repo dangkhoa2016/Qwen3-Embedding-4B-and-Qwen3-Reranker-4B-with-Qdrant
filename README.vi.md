@@ -2,6 +2,12 @@
 > 🌐 Language / Ngôn ngữ: [English](README.md) | **Tiếng Việt**
 
 [![CI](https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant/actions/workflows/ci.yml/badge.svg)](https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant?label=release)](https://github.com/dangkhoa2016/Qwen3-Embedding-4B-and-Qwen3-Reranker-4B-with-Qdrant/releases/tag/v1.0.0)
+![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.12-3776AB?logo=python&logoColor=white)
+![Qdrant](https://img.shields.io/badge/Qdrant-1.18.3-DC244C?logo=qdrant&logoColor=white)
+![Production Demo](https://img.shields.io/badge/Kaggle%20CPU-Qualified-20BEFF?logo=kaggle&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Docs](https://img.shields.io/badge/Docs-English%20%7C%20Ti%E1%BA%BFng%20Vi%E1%BB%87t-informational)
 
 ## Tổng quan
 
